@@ -99,7 +99,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
   {
     for (row = 0; row < height; row++)
     {
-      for (col = 0; col < width; col++)
+      for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
         dst[col] = src[col];
       }
@@ -114,7 +114,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
 
     for (row = 0; row < height; row++)
     {
-      for (col = 0; col < width; col++)
+      for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
         Pel val = leftShift_round(src[col], shift);
         dst[col] = val - (Pel)IF_INTERNAL_OFFS;
@@ -132,7 +132,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
     Pel minVal = 0;
     for (row = 0; row < height; row++)
     {
-      for (col = 0; col < width; col++)
+      for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
         Pel val = src[ col ];
         val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
@@ -220,7 +220,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 
   for (row = 0; row < height; row++)
   {
-    for (col = 0; col < width; col++)
+    for (col = 0; col < width; col++) // loop vectorized + peeled.
     {
       Int sum;
 
