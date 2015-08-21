@@ -1146,7 +1146,7 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
     return;
   }
   UInt maxOffset = 0;
-  for(Int idx=0; idx<pSlice->getNumberOfSubstreamSizes(); idx++)
+  for(Int idx=0; idx<pSlice->getNumberOfSubstreamSizes(); idx++) // loop vectorized + peeled
   {
     UInt offset=pSlice->getSubstreamSize(idx);
     if ( offset > maxOffset )

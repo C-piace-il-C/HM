@@ -693,7 +693,7 @@ Int TEncEntropy::countNonZeroCoeffs( TCoeff* pcCoef, UInt uiSize )
 {
   Int count = 0;
 
-  for ( Int i = 0; i < uiSize; i++ )
+  for ( Int i = 0; i < uiSize; i++ ) // loop vectorized + peeled
   {
     count += pcCoef[i] != 0;
   }

@@ -1048,7 +1048,7 @@ Int xCalcHADs8x8_ISlice(Pel *piOrg, Int iStrideOrg)
   Int k, i, j, jj;
   Int diff[64], m1[8][8], m2[8][8], m3[8][8], iSumHad = 0;
 
-  for( k = 0; k < 64; k += 8 )
+  for( k = 0; k < 64; k += 8 ) // loop vectorized
   {
     diff[k+0] = piOrg[0] ;
     diff[k+1] = piOrg[1] ;
@@ -1095,7 +1095,7 @@ Int xCalcHADs8x8_ISlice(Pel *piOrg, Int iStrideOrg)
   }
 
   //vertical
-  for (i=0; i < 8; i++)
+  for (i=0; i < 8; i++) // loop vectorized 
   {
     m3[0][i] = m2[0][i] + m2[4][i];
     m3[1][i] = m2[1][i] + m2[5][i];
@@ -1125,7 +1125,7 @@ Int xCalcHADs8x8_ISlice(Pel *piOrg, Int iStrideOrg)
     m2[7][i] = m1[6][i] - m1[7][i];
   }
 
-  for (i = 0; i < 8; i++)
+  for (i = 0; i < 8; i++) // loop vectorized
   {
     for (j = 0; j < 8; j++)
     {
@@ -1553,7 +1553,7 @@ Void TEncCu::xFillPCMBuffer     ( TComDataCU* pCU, TComYuv* pOrgYuv )
 
     for (Int line = 0; line < height; line++)
     {
-      for (Int column = 0; column < width; column++)
+      for (Int column = 0; column < width; column++) // loop vectorized + versioned + peeled
       {
         destination[column] = source[column];
       }

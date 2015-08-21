@@ -212,7 +212,7 @@ Void TEncSearch::init(TEncCfg*      pcEncCfg,
                       TEncSbac*   pcRDGoOnSbacCoder
                       )
 {
-  m_pcEncCfg             = pcEncCfg;
+  m_pcEncCfg             = pcEncCfg; // basic block vectorized
   m_pcTrQuant            = pcTrQuant;
   m_iSearchRange         = iSearchRange;
   m_bipredSearchRange    = bipredSearchRange;
@@ -225,7 +225,7 @@ Void TEncSearch::init(TEncCfg*      pcEncCfg,
 
   for (UInt iDir = 0; iDir < MAX_NUM_REF_LIST_ADAPT_SR; iDir++)
   {
-    for (UInt iRefIdx = 0; iRefIdx < MAX_IDX_ADAPT_SR; iRefIdx++)
+    for (UInt iRefIdx = 0; iRefIdx < MAX_IDX_ADAPT_SR; iRefIdx++) // vectorized + peeled
     {
       m_aaiAdaptSR[iDir][iRefIdx] = iSearchRange;
     }
@@ -1213,7 +1213,7 @@ Void TEncSearch::xIntraCodingTUBlock(       TComYuv*    pcOrgYuv,
 
     for( UInt uiY = 0; uiY < uiHeight; uiY++ )
     {
-      for( UInt uiX = 0; uiX < uiWidth; uiX++ )
+      for( UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + versioned + peeled
       {
         pResi[ uiX ] = pOrg[ uiX ] - pPred[ uiX ];
       }
@@ -1366,7 +1366,7 @@ Void TEncSearch::xIntraCodingTUBlock(       TComYuv*    pcOrgYuv,
 
       for( UInt uiY = 0; uiY < uiHeight; uiY++ )
       {
-        for( UInt uiX = 0; uiX < uiWidth; uiX++ )
+        for( UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + versioned + peeled
         {
           pReco    [ uiX ] = Pel(ClipBD<Int>( Int(pPred[uiX]) + Int(pResi[uiX]), bitDepth ));
           pRecQt   [ uiX ] = pReco[ uiX ];
@@ -1642,7 +1642,7 @@ TEncSearch::xRecurIntraCodingLumaQT(TComYuv*    pcOrgYuv,
       {
         const UInt flag=1<<uiTrDepth;
         UChar *pBase=pcCU->getCbf( COMPONENT_Y );
-        for( UInt uiOffs = 0; uiOffs < uiPartsDiv; uiOffs++ )
+        for( UInt uiOffs = 0; uiOffs < uiPartsDiv; uiOffs++ ) // loop vectorized + versioned + peeled
         {
           pBase[ uiAbsPartIdx + uiOffs ] |= flag;
         }
@@ -1701,7 +1701,7 @@ TEncSearch::xRecurIntraCodingLumaQT(TComYuv*    pcOrgYuv,
 
     for( UInt uiY = 0; uiY < uiHeight; uiY++, piSrc += uiSrcStride, piDes += uiDesStride )
     {
-      for( UInt uiX = 0; uiX < uiWidth; uiX++ )
+      for( UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + versioned + peeled
       {
         piDes[ uiX ] = piSrc[ uiX ];
       }
@@ -1832,7 +1832,7 @@ TEncSearch::xLoadIntraResultQT(const ComponentID compID, TComTU &rTu)
       Pel* pRecIPred            = piRecIPred;
       for( UInt uiY = 0; uiY < uiHeight; uiY++ )
       {
-        for( UInt uiX = 0; uiX < uiWidth; uiX++ )
+        for( UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + versioned + peeled
         {
           pRecIPred[ uiX ] = pRecQt   [ uiX ];
         }
@@ -1888,7 +1888,7 @@ TEncSearch::xCalcCrossComponentPredictionAlpha(       TComTU &rTu,
 
   for( UInt uiY = 0; uiY < height; uiY++ )
   {
-    for( UInt uiX = 0; uiX < width; uiX++ )
+    for( UInt uiX = 0; uiX < width; uiX++ ) // loop vectorized + versioned + peeled
     {
       const Pel scaledResiL = rightShift( pResiL[ uiX ], diffBitDepth );
       SSxy += ( scaledResiL * pResiC[ uiX ] );
@@ -1951,7 +1951,7 @@ TEncSearch::xRecurIntraChromaCodingQT(TComYuv*    pcOrgYuv,
       {
         Int nbLumaSkip = 0;
         const UInt maxAbsPartIdxSub=uiAbsPartIdx + (rTu.ProcessingAllQuadrants(COMPONENT_Cb)?1:4);
-        for(UInt absPartIdxSub = uiAbsPartIdx; absPartIdxSub < maxAbsPartIdxSub; absPartIdxSub ++)
+        for(UInt absPartIdxSub = uiAbsPartIdx; absPartIdxSub < maxAbsPartIdxSub; absPartIdxSub ++) // loop vectorized + peeled
         {
           nbLumaSkip += pcCU->getTransformSkip(absPartIdxSub, COMPONENT_Y);
         }
@@ -2114,7 +2114,7 @@ TEncSearch::xRecurIntraChromaCodingQT(TComYuv*    pcOrgYuv,
         const UInt flag=1<<uiTrDepth;
         ComponentID compID=ComponentID(ch);
         UChar *pBase=pcCU->getCbf( compID );
-        for( UInt uiOffs = 0; uiOffs < uiPartsDiv; uiOffs++ )
+        for( UInt uiOffs = 0; uiOffs < uiPartsDiv; uiOffs++ ) // loop vectorized + peeled
         {
           pBase[ uiAbsPartIdx + uiOffs ] |= flag;
         }
@@ -2684,7 +2684,7 @@ TEncSearch::estIntraPredChromaQT(TComDataCU* pcCU,
 
           for( UInt uiY = 0; uiY < uiCompHeight; uiY++, piSrc += uiSrcStride, piDes += uiDesStride )
           {
-            for( UInt uiX = 0; uiX < uiCompWidth; uiX++ )
+            for( UInt uiX = 0; uiX < uiCompWidth; uiX++ ) // loop vectorized + peeled + versioned
             {
               piDes[ uiX ] = piSrc[ uiX ];
             }

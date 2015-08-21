@@ -82,8 +82,8 @@ struct SAOStatData //data structure for SAO statistics
     return *this;
   }
   const SAOStatData& operator+= (const SAOStatData& src)
-  {
-    for(Int i=0; i< MAX_NUM_SAO_CLASSES; i++)
+  { 
+    for(Int i=0; i< MAX_NUM_SAO_CLASSES; i++) // loop vectorized + versioned + peeled for vectorization
     {
       diff[i] += src.diff[i];
       count[i] += src.count[i];
