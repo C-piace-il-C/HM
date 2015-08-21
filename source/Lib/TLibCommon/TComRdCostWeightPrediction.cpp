@@ -303,7 +303,7 @@ Distortion xCalcHADs8x8w( const WPScalingParam &wpCur, const Pel *piOrg, const P
 
   Pel   pred;
 
-  for(Int k = 0; k < 64; k+=8 )
+  for(Int k = 0; k < 64; k+=8 ) // loop vectorized.
   {
     pred      = ( (w0*piCur[     0] + round) >> shift ) + offset ;
     diff[k+0] = piOrg[0] - pred;
@@ -359,7 +359,7 @@ Distortion xCalcHADs8x8w( const WPScalingParam &wpCur, const Pel *piOrg, const P
   }
 
   //vertical
-  for (Int i=0; i < 8; i++)
+  for (Int i=0; i < 8; i++) // loop vectorized.
   {
     m3[0][i] = m2[0][i] + m2[4][i];
     m3[1][i] = m2[1][i] + m2[5][i];
@@ -389,7 +389,7 @@ Distortion xCalcHADs8x8w( const WPScalingParam &wpCur, const Pel *piOrg, const P
     m2[7][i] = m1[6][i] - m1[7][i];
   }
 
-  for (Int j=0; j < 8; j++)
+  for (Int j=0; j < 8; j++) // loop vectorized.
   {
     for (Int i=0; i < 8; i++)
     {
