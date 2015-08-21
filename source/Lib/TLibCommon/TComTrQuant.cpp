@@ -161,7 +161,7 @@ Void TComTrQuant::storeSliceQpNext(TComSlice* pcSlice)
   Double alpha = qpBase < 17 ? 0.5 : 1;
 
   Int cnt=0;
-  for(Int u=1; u<=LEVEL_RANGE; u++)
+  for(Int u=1; u<=LEVEL_RANGE; u++) // loop vectorized.
   {
     cnt += m_sliceNsamples[u] ;
   }
@@ -210,7 +210,7 @@ Void TComTrQuant::storeSliceQpNext(TComSlice* pcSlice)
 
 Void TComTrQuant::initSliceQpDelta()
 {
-  for(Int qp=0; qp<=MAX_QP; qp++)
+  for(Int qp=0; qp<=MAX_QP; qp++) // loop vectorized + peeled.
   {
     m_qpDelta[qp] = qp < 17 ? 0 : 1;
   }
@@ -391,7 +391,7 @@ Void partialButterfly4(TCoeff *src, TCoeff *dst, Int shift, Int line)
   TCoeff E[2],O[2];
   TCoeff add = (shift > 0) ? (1<<(shift-1)) : 0;
 
-  for (j=0; j<line; j++)
+  for (j=0; j<line; j++) // loop vectorized + peeled.
   {
     /* E and O */
     E[0] = src[0] + src[3];
@@ -479,7 +479,7 @@ Void partialButterflyInverse4(TCoeff *src, TCoeff *dst, Int shift, Int line, con
   TCoeff E[2],O[2];
   TCoeff add = (shift > 0) ? (1<<(shift-1)) : 0;
 
-  for (j=0; j<line; j++)
+  for (j=0; j<line; j++) // loop vectorized.
   {
     /* Utilizing symmetry properties to the maximum to minimize the number of multiplications */
     O[0] = g_aiT4[TRANSFORM_INVERSE][1][0]*src[line] + g_aiT4[TRANSFORM_INVERSE][3][0]*src[3*line];
@@ -555,7 +555,7 @@ Void partialButterflyInverse8(TCoeff *src, TCoeff *dst, Int shift, Int line, con
   TCoeff EE[2],EO[2];
   TCoeff add = (shift > 0) ? (1<<(shift-1)) : 0;
 
-  for (j=0; j<line; j++)
+  for (j=0; j<line; j++) // loop vectorized.
   {
     /* Utilizing symmetry properties to the maximum to minimize the number of multiplications */
     for (k=0;k<4;k++)
@@ -662,7 +662,7 @@ Void partialButterflyInverse16(TCoeff *src, TCoeff *dst, Int shift, Int line, co
   for (j=0; j<line; j++)
   {
     /* Utilizing symmetry properties to the maximum to minimize the number of multiplications */
-    for (k=0;k<8;k++)
+    for (k=0;k<8;k++) // loop vectorized.
     {
       O[k] = g_aiT16[TRANSFORM_INVERSE][ 1][k]*src[ line]   + g_aiT16[TRANSFORM_INVERSE][ 3][k]*src[ 3*line] +
              g_aiT16[TRANSFORM_INVERSE][ 5][k]*src[ 5*line] + g_aiT16[TRANSFORM_INVERSE][ 7][k]*src[ 7*line] +
@@ -690,7 +690,7 @@ Void partialButterflyInverse16(TCoeff *src, TCoeff *dst, Int shift, Int line, co
       E[k] = EE[k] + EO[k];
       E[k+4] = EE[3-k] - EO[3-k];
     }
-    for (k=0;k<8;k++)
+    for (k=0;k<8;k++) // loop vectorized.
     {
       dst[k]   = Clip3( outputMinimum, outputMaximum, (E[k] + O[k] + add)>>shift );
       dst[k+8] = Clip3( outputMinimum, outputMaximum, (E[7-k] - O[7-k] + add)>>shift );
@@ -794,7 +794,7 @@ Void partialButterflyInverse32(TCoeff *src, TCoeff *dst, Int shift, Int line, co
   for (j=0; j<line; j++)
   {
     /* Utilizing symmetry properties to the maximum to minimize the number of multiplications */
-    for (k=0;k<16;k++)
+    for (k=0;k<16;k++) // loop vectorized.
     {
       O[k] = g_aiT32[TRANSFORM_INVERSE][ 1][k]*src[ line    ] + g_aiT32[TRANSFORM_INVERSE][ 3][k]*src[ 3*line  ] +
              g_aiT32[TRANSFORM_INVERSE][ 5][k]*src[ 5*line  ] + g_aiT32[TRANSFORM_INVERSE][ 7][k]*src[ 7*line  ] +
@@ -805,7 +805,7 @@ Void partialButterflyInverse32(TCoeff *src, TCoeff *dst, Int shift, Int line, co
              g_aiT32[TRANSFORM_INVERSE][25][k]*src[ 25*line ] + g_aiT32[TRANSFORM_INVERSE][27][k]*src[ 27*line ] +
              g_aiT32[TRANSFORM_INVERSE][29][k]*src[ 29*line ] + g_aiT32[TRANSFORM_INVERSE][31][k]*src[ 31*line ];
     }
-    for (k=0;k<8;k++)
+    for (k=0;k<8;k++) // loop vectorized.
     {
       EO[k] = g_aiT32[TRANSFORM_INVERSE][ 2][k]*src[ 2*line  ] + g_aiT32[TRANSFORM_INVERSE][ 6][k]*src[ 6*line  ] +
               g_aiT32[TRANSFORM_INVERSE][10][k]*src[ 10*line ] + g_aiT32[TRANSFORM_INVERSE][14][k]*src[ 14*line ] +
@@ -837,7 +837,7 @@ Void partialButterflyInverse32(TCoeff *src, TCoeff *dst, Int shift, Int line, co
       E[k] = EE[k] + EO[k];
       E[k+8] = EE[7-k] - EO[7-k];
     }
-    for (k=0;k<16;k++)
+    for (k=0;k<16;k++) // loop vectorized.
     {
       dst[k]    = Clip3( outputMinimum, outputMaximum, (E[k] + O[k] + add)>>shift );
       dst[k+16] = Clip3( outputMinimum, outputMaximum, (E[15-k] - O[15-k] + add)>>shift );
@@ -1369,7 +1369,7 @@ Void TComTrQuant::xDeQuant(       TComTU        &rTu,
     {
       const Intermediate_Int iAdd = 1 << (rightShift - 1);
 
-      for( Int n = 0; n < numSamplesInBlock; n++ )
+      for( Int n = 0; n < numSamplesInBlock; n++ ) // loop vectorized + peeled.
       {
         const TCoeff           clipQCoef = TCoeff(Clip3<Intermediate_Int>(inputMinimum, inputMaximum, piQCoef[n]));
         const Intermediate_Int iCoeffQ   = ((Intermediate_Int(clipQCoef) * piDequantCoef[n]) + iAdd ) >> rightShift;
@@ -1381,7 +1381,7 @@ Void TComTrQuant::xDeQuant(       TComTU        &rTu,
     {
       const Int leftShift = -rightShift;
 
-      for( Int n = 0; n < numSamplesInBlock; n++ )
+      for( Int n = 0; n < numSamplesInBlock; n++ ) // loop vectorized + peeled.
       {
         const TCoeff           clipQCoef = TCoeff(Clip3<Intermediate_Int>(inputMinimum, inputMaximum, piQCoef[n]));
         const Intermediate_Int iCoeffQ   = (Intermediate_Int(clipQCoef) * piDequantCoef[n]) << leftShift;
@@ -1406,7 +1406,7 @@ Void TComTrQuant::xDeQuant(       TComTU        &rTu,
     {
       const Intermediate_Int iAdd = 1 << (rightShift - 1);
 
-      for( Int n = 0; n < numSamplesInBlock; n++ )
+      for( Int n = 0; n < numSamplesInBlock; n++ ) // loop vectorized + peeled.
       {
         const TCoeff           clipQCoef = TCoeff(Clip3<Intermediate_Int>(inputMinimum, inputMaximum, piQCoef[n]));
         const Intermediate_Int iCoeffQ   = (Intermediate_Int(clipQCoef) * scale + iAdd) >> rightShift;
@@ -1418,7 +1418,7 @@ Void TComTrQuant::xDeQuant(       TComTU        &rTu,
     {
       const Int leftShift = -rightShift;
 
-      for( Int n = 0; n < numSamplesInBlock; n++ )
+      for( Int n = 0; n < numSamplesInBlock; n++ ) // loop vectorized + peeled.
       {
         const TCoeff           clipQCoef = TCoeff(Clip3<Intermediate_Int>(inputMinimum, inputMaximum, piQCoef[n]));
         const Intermediate_Int iCoeffQ   = (Intermediate_Int(clipQCoef) * scale) << leftShift;
@@ -1602,7 +1602,7 @@ Void TComTrQuant::invTransformNxN(      TComTU        &rTu,
 
     for (UInt y = 0, coefficientIndex = 0; y<uiHeight; y++)
     {
-      for (UInt x = 0; x<uiWidth; x++, coefficientIndex++)
+      for (UInt x = 0; x<uiWidth; x++, coefficientIndex++) // loop vectorized + peeled.
       {
         pcResidual[(y * uiStride) + x] = Pel(pcCoeff[rotateResidual ? (uiSizeMinus1 - coefficientIndex) : coefficientIndex]);
       }
@@ -1964,7 +1964,7 @@ Void TComTrQuant::xT( const Int channelBitDepth, Bool useDST, Pel* piBlkResi, UI
 
   for (Int y = 0; y < iHeight; y++)
   {
-    for (Int x = 0; x < iWidth; x++)
+    for (Int x = 0; x < iWidth; x++) // loop vectorized + peeled.
     {
       block[(y * iWidth) + x] = piBlkResi[(y * uiStride) + x];
     }
@@ -2004,7 +2004,7 @@ Void TComTrQuant::xIT( const Int channelBitDepth, Bool useDST, TCoeff* plCoef, P
 
   for (Int y = 0; y < iHeight; y++)
   {
-    for (Int x = 0; x < iWidth; x++)
+    for (Int x = 0; x < iWidth; x++) // loop vectorized + peeled.
     {
       pResidual[(y * uiStride) + x] = Pel(block[(y * iWidth) + x]);
     }
@@ -2039,7 +2039,7 @@ Void TComTrQuant::xTransformSkip( Pel* piBlkResi, UInt uiStride, TCoeff* psCoeff
   {
     for (UInt y = 0, coefficientIndex = 0; y < height; y++)
     {
-      for (UInt x = 0; x < width; x++, coefficientIndex++)
+      for (UInt x = 0; x < width; x++, coefficientIndex++) // loop vectorized + peeled.
       {
         psCoeff[rotateResidual ? (uiSizeMinus1 - coefficientIndex) : coefficientIndex] = TCoeff(piBlkResi[(y * uiStride) + x]) << iTransformShift;
       }
@@ -2052,7 +2052,7 @@ Void TComTrQuant::xTransformSkip( Pel* piBlkResi, UInt uiStride, TCoeff* psCoeff
 
     for (UInt y = 0, coefficientIndex = 0; y < height; y++)
     {
-      for (UInt x = 0; x < width; x++, coefficientIndex++)
+      for (UInt x = 0; x < width; x++, coefficientIndex++) // loop vectorized + peeled.
       {
         psCoeff[rotateResidual ? (uiSizeMinus1 - coefficientIndex) : coefficientIndex] = (TCoeff(piBlkResi[(y * uiStride) + x]) + offset) >> iTransformShift;
       }
@@ -2094,7 +2094,7 @@ Void TComTrQuant::xITransformSkip( TCoeff* plCoef, Pel* pResidual, UInt uiStride
 
     for (UInt y = 0, coefficientIndex = 0; y < height; y++)
     {
-      for (UInt x = 0; x < width; x++, coefficientIndex++)
+      for (UInt x = 0; x < width; x++, coefficientIndex++) // loop vectorized + peeled.
       {
         pResidual[(y * uiStride) + x] =  Pel((plCoef[rotateResidual ? (uiSizeMinus1 - coefficientIndex) : coefficientIndex] + offset) >> iTransformShift);
       }
@@ -2106,7 +2106,7 @@ Void TComTrQuant::xITransformSkip( TCoeff* plCoef, Pel* pResidual, UInt uiStride
 
     for (UInt y = 0, coefficientIndex = 0; y < height; y++)
     {
-      for (UInt x = 0; x < width; x++, coefficientIndex++)
+      for (UInt x = 0; x < width; x++, coefficientIndex++) // loop vectorized + peeled.
       {
         pResidual[(y * uiStride) + x] = Pel(plCoef[rotateResidual ? (uiSizeMinus1 - coefficientIndex) : coefficientIndex] << iTransformShift);
       }
@@ -3219,7 +3219,7 @@ Void TComTrQuant::xsetFlatScalingList(UInt list, UInt size, Int qp)
   quantcoeff   = getQuantCoeff(list, qp, size);
   dequantcoeff = getDequantCoeff(list, qp, size);
 
-  for(i=0;i<num;i++)
+  for(i=0;i<num;i++) // loop vectorized + peeled.
   {
     *quantcoeff++ = quantScales;
     *dequantcoeff++ = invQuantScales;
@@ -3518,7 +3518,7 @@ Void TComTrQuant::crossComponentPrediction(       TComTU      & rTu,
 #else
       const Int minPel=std::numeric_limits<Pel>::min();
       const Int maxPel=std::numeric_limits<Pel>::max();
-      for( Int x = 0; x < width; x++ )
+      for( Int x = 0; x < width; x++ ) // loop vectorized + peeled.
       {
         pResiT[x] = Clip3<Int>(minPel, maxPel, pResiC[x] + (( alpha * rightShift<Int>(Int(pResiL[x]), diffBitDepth) ) >> 3));
       }
@@ -3527,7 +3527,7 @@ Void TComTrQuant::crossComponentPrediction(       TComTU      & rTu,
     else
     {
       // Forward does not need clipping. Pel type should always be big enough.
-      for( Int x = 0; x < width; x++ )
+      for( Int x = 0; x < width; x++ ) // loop vectorized + peeled.
       {
         pResiT[x] = pResiC[x] - (( alpha * rightShift<Int>(Int(pResiL[x]), diffBitDepth) ) >> 3);
       }
