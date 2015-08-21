@@ -299,7 +299,7 @@ Void TComYuv::addClip( const TComYuv* pcYuvSrc0, const TComYuv* pcYuvSrc1, const
 
     for ( Int y = uiPartHeight-1; y >= 0; y-- )
     {
-      for ( Int x = uiPartWidth-1; x >= 0; x-- )
+      for ( Int x = uiPartWidth-1; x >= 0; x-- ) // loop vectorized + peeled.
       {
 #if O0043_BEST_EFFORT_DECODING
         pDst[x] = Pel(ClipBD<Int>( Int(pSrc0[x]) + rightShiftEvenRounding<Pel>(pSrc1[x], bitDepthDelta), clipbd));
@@ -335,7 +335,7 @@ Void TComYuv::subtract( const TComYuv* pcYuvSrc0, const TComYuv* pcYuvSrc1, cons
 
     for (Int y = uiPartHeight-1; y >= 0; y-- )
     {
-      for (Int x = uiPartWidth-1; x >= 0; x-- )
+      for (Int x = uiPartWidth-1; x >= 0; x-- ) // loop vectorized + peeled.
       {
         pDst[x] = pSrc0[x] - pSrc1[x];
       }
@@ -377,7 +377,7 @@ Void TComYuv::addAvg( const TComYuv* pcYuvSrc0, const TComYuv* pcYuvSrc1, const 
     {
       for ( Int y = 0; y < iHeight; y++ )
       {
-        for (Int x=0 ; x < iWidth; x+=2 )
+        for (Int x=0 ; x < iWidth; x+=2 ) // loop vectorized.
         {
           pDst[ x + 0 ] = ClipBD( rightShift(( pSrc0[ x + 0 ] + pSrc1[ x + 0 ] + offset ), shiftNum), clipbd );
           pDst[ x + 1 ] = ClipBD( rightShift(( pSrc0[ x + 1 ] + pSrc1[ x + 1 ] + offset ), shiftNum), clipbd );
@@ -391,7 +391,7 @@ Void TComYuv::addAvg( const TComYuv* pcYuvSrc0, const TComYuv* pcYuvSrc1, const 
     {
       for ( Int y = 0; y < iHeight; y++ )
       {
-        for (Int x=0 ; x < iWidth; x+=4 )
+        for (Int x=0 ; x < iWidth; x+=4 ) // loop vectorized.
         {
           pDst[ x + 0 ] = ClipBD( rightShift(( pSrc0[ x + 0 ] + pSrc1[ x + 0 ] + offset ), shiftNum), clipbd );
           pDst[ x + 1 ] = ClipBD( rightShift(( pSrc0[ x + 1 ] + pSrc1[ x + 1 ] + offset ), shiftNum), clipbd );
@@ -429,7 +429,7 @@ Void TComYuv::removeHighFreq( const TComYuv* pcYuvSrc,
       const Int clipBd=bitDepths[toChannelType(compID)];
       for ( Int y = iHeight-1; y >= 0; y-- )
       {
-        for ( Int x = iWidth-1; x >= 0; x-- )
+        for ( Int x = iWidth-1; x >= 0; x-- ) // loop vectorized + peeled.
         {
           pDst[x ] = ClipBD((2 * pDst[x]) - pSrc[x], clipBd);
         }
@@ -441,7 +441,7 @@ Void TComYuv::removeHighFreq( const TComYuv* pcYuvSrc,
     {
       for ( Int y = iHeight-1; y >= 0; y-- )
       {
-        for ( Int x = iWidth-1; x >= 0; x-- )
+        for ( Int x = iWidth-1; x >= 0; x-- ) // loop vectorized + peeled.
         {
           pDst[x ] = (2 * pDst[x]) - pSrc[x];
         }
