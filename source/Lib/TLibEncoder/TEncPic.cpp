@@ -61,7 +61,7 @@ TEncPicQPAdaptationLayer::TEncPicQPAdaptationLayer()
 , m_uiNumAQPartInWidth(0)
 , m_uiNumAQPartInHeight(0)
 , m_acTEncAQU(NULL)
-, m_dAvgActivity(0.0)
+, m_dAvgActivity(0.0) // basic block vectorized
 {
 }
 

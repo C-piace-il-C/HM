@@ -366,7 +366,7 @@ Void separateFields(Pel* org, Pel* dstField, UInt stride, UInt width, UInt heigh
   }
   for (Int y = 0; y < height>>1; y++)
   {
-    for (Int x = 0; x < width; x++)
+    for (Int x = 0; x < width; x++) // loop vectorized + versioned + peeled
     {
       dstField[x] = org[x];
     }
@@ -560,7 +560,7 @@ Void TEncTop::xInitSPS()
   /* XXX: may be a good idea to refactor the above into a function
    * that chooses the actual compatibility based upon options */
 
-  m_cSPS.setPicWidthInLumaSamples  ( m_iSourceWidth      );
+  m_cSPS.setPicWidthInLumaSamples  ( m_iSourceWidth      ); // basic block vectorized
   m_cSPS.setPicHeightInLumaSamples ( m_iSourceHeight     );
   m_cSPS.setConformanceWindow      ( m_conformanceWindow );
   m_cSPS.setMaxCUWidth             ( m_maxCUWidth        );
@@ -609,7 +609,7 @@ Void TEncTop::xInitSPS()
   m_cSPS.setMaxTLayers( m_maxTempLayer );
   m_cSPS.setTemporalIdNestingFlag( ( m_maxTempLayer == 1 ) ? true : false );
 
-  for (Int i = 0; i < min(m_cSPS.getMaxTLayers(),(UInt) MAX_TLAYER); i++ )
+  for (Int i = 0; i < min(m_cSPS.getMaxTLayers(),(UInt) MAX_TLAYER); i++ ) // loop vectorized + versioned 
   {
     m_cSPS.setMaxDecPicBuffering(m_maxDecPicBuffering[i], i);
     m_cSPS.setNumReorderPics(m_numReorderPics[i], i);
@@ -841,7 +841,7 @@ Void TEncTop::xInitPPS()
     m_cPPS.getPpsRangeExtension().setDiffCuChromaQpOffsetDepth(0);
     m_cPPS.getPpsRangeExtension().clearChromaQpOffsetList();
   }
-  m_cPPS.getPpsRangeExtension().setCrossComponentPredictionEnabledFlag(m_crossComponentPredictionEnabledFlag);
+  m_cPPS.getPpsRangeExtension().setCrossComponentPredictionEnabledFlag(m_crossComponentPredictionEnabledFlag); // basic block vectorized
   m_cPPS.getPpsRangeExtension().setLog2SaoOffsetScale(CHANNEL_TYPE_LUMA,   m_log2SaoOffsetScale[CHANNEL_TYPE_LUMA  ]);
   m_cPPS.getPpsRangeExtension().setLog2SaoOffsetScale(CHANNEL_TYPE_CHROMA, m_log2SaoOffsetScale[CHANNEL_TYPE_CHROMA]);
 
@@ -1146,7 +1146,7 @@ Int TEncTop::getReferencePictureSetIdxForSOP(Int POCCurr, Int GOPid )
 
 Void  TEncTop::xInitPPSforTiles()
 {
-  m_cPPS.setTileUniformSpacingFlag( m_tileUniformSpacingFlag );
+  m_cPPS.setTileUniformSpacingFlag( m_tileUniformSpacingFlag ); // baic block vectorized
   m_cPPS.setNumTileColumnsMinus1( m_iNumColumnsMinus1 );
   m_cPPS.setNumTileRowsMinus1( m_iNumRowsMinus1 );
   if( !m_tileUniformSpacingFlag )
@@ -1181,7 +1181,7 @@ Void  TEncCfg::xCheckGSParameters()
 
   if( m_iNumColumnsMinus1 && !m_tileUniformSpacingFlag )
   {
-    for(Int i=0; i<m_iNumColumnsMinus1; i++)
+    for(Int i=0; i<m_iNumColumnsMinus1; i++) // loop vectorized + peeled
     {
       uiCummulativeColumnWidth += m_tileColumnWidth[i];
     }
@@ -1208,7 +1208,7 @@ Void  TEncCfg::xCheckGSParameters()
 
   if( m_iNumRowsMinus1 && !m_tileUniformSpacingFlag )
   {
-    for(Int i=0; i<m_iNumRowsMinus1; i++)
+    for(Int i=0; i<m_iNumRowsMinus1; i++) // loop vectorized + peeled
     {
       uiCummulativeRowHeight += m_tileRowHeight[i];
     }

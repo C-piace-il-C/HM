@@ -609,7 +609,7 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
     while (iterPic != rcListPic.end())
     {
       rpcPic = *(iterPic);
-      rpcPic->setCurrSliceIdx(0);
+      rpcPic->setCurrSliceIdx(0); 
       if (rpcPic->getPOC() != pocCurr)
       {
         rpcPic->getSlice(0)->setReferenced(false);

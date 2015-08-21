@@ -2328,7 +2328,7 @@ TEncSearch::estIntraPredLumaQT(TComDataCU* pcCU,
     }
     else
     {
-      for( Int i=0; i < numModesForFullRD; i++)
+      for( Int i=0; i < numModesForFullRD; i++) // loop vectorized
       {
         uiRdModeList[i] = i;
       }
@@ -2524,7 +2524,7 @@ TEncSearch::estIntraPredLumaQT(TComDataCU* pcCU,
 
       for( UInt uiY = 0; uiY < uiCompHeight; uiY++, piSrc += uiSrcStride, piDes += uiDesStride )
       {
-        for( UInt uiX = 0; uiX < uiCompWidth; uiX++ )
+        for( UInt uiX = 0; uiX < uiCompWidth; uiX++ ) // loop vectorized + peeled + versioned
         {
           piDes[ uiX ] = piSrc[ uiX ];
         }
@@ -2944,7 +2944,7 @@ Void TEncSearch::predInterSearch( TComDataCU* pcCU, TComYuv* pcOrgYuv, TComYuv* 
 
   TComMv       cMv[2];
   TComMv       cMvBi[2];
-  TComMv       cMvTemp[2][33];
+  TComMv       cMvTemp[2][33]; 
 
   Int          iNumPart    = pcCU->getNumPartitions();
   Int          iNumPredDir = pcCU->getSlice()->isInterP() ? 1 : 2;
@@ -2982,7 +2982,7 @@ Void TEncSearch::predInterSearch( TComDataCU* pcCU, TComYuv* pcOrgYuv, TComYuv* 
 
   for ( Int iPartIdx = 0; iPartIdx < iNumPart; iPartIdx++ )
   {
-    Distortion   uiCost[2] = { std::numeric_limits<Distortion>::max(), std::numeric_limits<Distortion>::max() };
+    Distortion   uiCost[2] = { std::numeric_limits<Distortion>::max(), std::numeric_limits<Distortion>::max() }; // basic block vectorized
     Distortion   uiCostBi  =   std::numeric_limits<Distortion>::max();
     Distortion   uiCostTemp;
 
@@ -4474,7 +4474,7 @@ Void TEncSearch::xEstimateInterResidualQT( TComYuv    *pcResi,
   // code full block
   Double     dSingleCost = MAX_DOUBLE;
   UInt       uiSingleBits                                                                                                        = 0;
-  Distortion uiSingleDistComp            [MAX_NUM_COMPONENT][2/*0 = top (or whole TU for non-4:2:2) sub-TU, 1 = bottom sub-TU*/] = {{0,0},{0,0},{0,0}};
+  Distortion uiSingleDistComp            [MAX_NUM_COMPONENT][2/*0 = top (or whole TU for non-4:2:2) sub-TU, 1 = bottom sub-TU*/] = {{0,0},{0,0},{0,0}}; // basic block
   Distortion uiSingleDist                                                                                                        = 0;
   TCoeff     uiAbsSum                    [MAX_NUM_COMPONENT][2/*0 = top (or whole TU for non-4:2:2) sub-TU, 1 = bottom sub-TU*/] = {{0,0},{0,0},{0,0}};
   UInt       uiBestTransformMode         [MAX_NUM_COMPONENT][2/*0 = top (or whole TU for non-4:2:2) sub-TU, 1 = bottom sub-TU*/] = {{0,0},{0,0},{0,0}};
@@ -4974,7 +4974,7 @@ Void TEncSearch::xEstimateInterResidualQT( TComYuv    *pcResi,
       }
       UChar *pBase=pcCU->getCbf( ComponentID(ch) );
       const UInt flags=uiYUVCbf << uiTrMode;
-      for( UInt ui = 0; ui < 4 * uiQPartNumSubdiv; ++ui )
+      for( UInt ui = 0; ui < 4 * uiQPartNumSubdiv; ++ui ) // loop vectorized + peeled
       {
         pBase[uiAbsPartIdx + ui] |= flags;
       }

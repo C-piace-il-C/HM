@@ -1867,7 +1867,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1, co
 
     for(Int y = 0; y < iHeight; y++ )
     {
-      for(Int x = 0; x < iWidth; x++ )
+      for(Int x = 0; x < iWidth; x++ ) // loop vectorized + peeled
       {
         Intermediate_Int iTemp = pSrc0[x] - pSrc1[x];
         uiTotalDiff += UInt64((iTemp*iTemp) >> uiShift);
@@ -1983,7 +1983,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
     UInt64 uiSSDtemp=0;
     for(Int y = 0; y < iHeight; y++ )
     {
-      for(Int x = 0; x < iWidth; x++ )
+      for(Int x = 0; x < iWidth; x++ ) // loop vectorized + peeled
       {
         Intermediate_Int iDiff = (Intermediate_Int)( pOrg[x] - pRec[x] );
         uiSSDtemp   += iDiff * iDiff;
@@ -2135,7 +2135,7 @@ Void TEncGOP::xCalculateInterlacedAddPSNR( TComPic* pcPicOrgFirstField, TComPic*
 
       for(Int y = 0; y < iHeight; y++ )
       {
-        for(Int x = 0; x < iWidth; x++ )
+        for(Int x = 0; x < iWidth; x++ ) // loop vectorized + peeled
         {
           Intermediate_Int iDiff = (Intermediate_Int)( pOrg[x] - pRec[x] );
           uiSSDtemp   += iDiff * iDiff;
@@ -2476,7 +2476,7 @@ Void TEncGOP::applyDeblockingFilterMetric( TComPic* pcPic, UInt uiNumSlices )
   {
     colSADsum += colSAD[c];
   }
-  for(Int r = 0; r < noRows-1; r++)
+  for(Int r = 0; r < noRows-1; r++) // loop vectorized
   {
     rowSADsum += rowSAD[r];
   }

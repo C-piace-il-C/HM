@@ -342,7 +342,7 @@ public:
   Void    setDpbOutputDelayDuLengthMinus1(UInt value )                               { m_dpbOutputDelayDuLengthMinus1 = value;                    }
   UInt    getDpbOutputDelayDuLengthMinus1( ) const                                   { return m_dpbOutputDelayDuLengthMinus1;                     }
 
-  Void    setBitRateScale( UInt value )                                              { m_bitRateScale = value;                                    }
+  Void    setBitRateScale( UInt value )                                              { m_bitRateScale = value;                                    } // basic block vectorized
   UInt    getBitRateScale( ) const                                                   { return m_bitRateScale;                                     }
 
   Void    setCpbSizeScale( UInt value )                                              { m_cpbSizeScale = value;                                    }

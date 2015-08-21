@@ -91,12 +91,12 @@ Void TEncPreanalyzer::xPreanalyze( TEncPic* pcEPic )
         for ( ; by < uiCurrAQPartHeight>>1; by++ )
         {
           UInt bx = 0;
-          for ( ; bx < uiCurrAQPartWidth>>1; bx++, uiNumPixInAQPart++ )
+          for ( ; bx < uiCurrAQPartWidth>>1; bx++, uiNumPixInAQPart++ ) // loop vectorized + peeled
           {
             uiSum  [0] += pBlkY[bx];
             uiSumSq[0] += pBlkY[bx] * pBlkY[bx];
           }
-          for ( ; bx < uiCurrAQPartWidth; bx++, uiNumPixInAQPart++ )
+          for ( ; bx < uiCurrAQPartWidth; bx++, uiNumPixInAQPart++ ) // loop vectorized + peeled
           {
             uiSum  [1] += pBlkY[bx];
             uiSumSq[1] += pBlkY[bx] * pBlkY[bx];
@@ -106,12 +106,12 @@ Void TEncPreanalyzer::xPreanalyze( TEncPic* pcEPic )
         for ( ; by < uiCurrAQPartHeight; by++ )
         {
           UInt bx = 0;
-          for ( ; bx < uiCurrAQPartWidth>>1; bx++, uiNumPixInAQPart++ )
+          for ( ; bx < uiCurrAQPartWidth>>1; bx++, uiNumPixInAQPart++ ) // loop vectorized + peeled
           {
             uiSum  [2] += pBlkY[bx];
             uiSumSq[2] += pBlkY[bx] * pBlkY[bx];
           }
-          for ( ; bx < uiCurrAQPartWidth; bx++, uiNumPixInAQPart++ )
+          for ( ; bx < uiCurrAQPartWidth; bx++, uiNumPixInAQPart++ ) // loop vectorized + peeled
           {
             uiSum  [3] += pBlkY[bx];
             uiSumSq[3] += pBlkY[bx] * pBlkY[bx];
