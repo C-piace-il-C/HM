@@ -155,7 +155,7 @@ public:
     uint32_t val = 0;
     for (UInt i = 0; i < n; i++)
     {
-      val = (val << 8) | readByte();
+      val = (val << 8) | readByte(); // basic block vectorized
     }
     return val;
   }

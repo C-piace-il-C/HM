@@ -408,7 +408,7 @@ static inline istream& operator >> (istream &in, ScalingListMode &mode)
 }
 
 template <class T>
-struct SMultiValueInput
+struct SMultiValueInput // basic block vectorized
 {
   const T              minValIncl;
   const T              maxValIncl; // Use 0 for unlimited
@@ -671,9 +671,9 @@ automaticallySelectRExtProfile(const Bool bUsingGeneralRExtTools,
     \retval             true when success
  */
 //Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
-Bool TAppEncCfg::parseCfg( Int argc, TChar* argv[] )
+Bool TAppEncCfg::parseCfg( Int argc, TChar* argv[] ) // basic block vectorized
 {
-  Bool do_help = false;
+  Bool do_help = false; // basic block
 
   string cfg_InputFile;
   string cfg_BitstreamFile;
@@ -1186,7 +1186,7 @@ Bool TAppEncCfg::parseCfg( Int argc, TChar* argv[] )
     else
     {
       m_tileRowHeight.resize(m_numTileRowsMinus1);
-      for(UInt i=0; i<cfg_RowHeight.values.size(); i++)
+      for(UInt i=0; i<cfg_RowHeight.values.size(); i++) // loop vectorized + versioned 
       {
         m_tileRowHeight[i]=cfg_RowHeight.values[i];
       }
@@ -2099,7 +2099,7 @@ Void TAppEncCfg::xCheckParameter()
     }
     xConfirmPara(m_GOPList[i].m_sliceType!='B' && m_GOPList[i].m_sliceType!='P' && m_GOPList[i].m_sliceType!='I', "Slice type must be equal to B or P or I");
   }
-  for(Int i=0; i<MAX_TLAYER; i++)
+  for(Int i=0; i<MAX_TLAYER; i++) // loop vectorized + peeled
   {
     m_numReorderPics[i] = 0;
     m_maxDecPicBuffering[i] = 1;
@@ -2192,7 +2192,7 @@ Void TAppEncCfg::xCheckParameter()
         else
         {
           Int accColumnWidth = 0;
-          for(Int col=0; col<(m_numTileColumnsMinus1); col++)
+          for(Int col=0; col<(m_numTileColumnsMinus1); col++) // loop vectorized + peeled 
           {
             maxTileWidth = m_tileColumnWidth[col]>maxTileWidth ? m_tileColumnWidth[col]:maxTileWidth;
             accColumnWidth += m_tileColumnWidth[col];
@@ -2206,7 +2206,7 @@ Void TAppEncCfg::xCheckParameter()
         else
         {
           Int accRowHeight = 0;
-          for(Int row=0; row<(m_numTileRowsMinus1); row++)
+          for(Int row=0; row<(m_numTileRowsMinus1); row++) // loop vectorized + peeled 
           {
             maxTileHeight = m_tileRowHeight[row]>maxTileHeight ? m_tileRowHeight[row]:maxTileHeight;
             accRowHeight += m_tileRowHeight[row];

@@ -62,7 +62,7 @@ public:
 
   TComMv() :
   m_iHor(0),
-  m_iVer(0)
+  m_iVer(0) // basic block vectorized
   {
   }
 

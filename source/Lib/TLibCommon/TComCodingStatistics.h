@@ -231,7 +231,7 @@ class TComCodingStatistics
       { bits+=src.bits; count+=src.count; sum+=src.sum; return *this; }
     };
 
-    class TComCodingStatisticsData
+    class TComCodingStatisticsData  // loop vectorized
     {
       private:
         SStat statistics[STATS__NUM_STATS+1][CODING_STATS_NUM_SUBCLASSES];
@@ -315,8 +315,8 @@ class TComCodingStatistics
 
       OutputDashedLine("");
       SStat cabacTotalBits, epTotalBits;
-      SStat statTotals_cabac[CODING_STATS_NUM_SUBCLASSES];
-      SStat statTotals_ep[CODING_STATS_NUM_SUBCLASSES];
+      SStat statTotals_cabac[CODING_STATS_NUM_SUBCLASSES]; // loop vectorized
+      SStat statTotals_ep[CODING_STATS_NUM_SUBCLASSES]; // loop vectorized
 
       for(Int i=0; i<STATS__NUM_STATS; i++)
       {
@@ -457,7 +457,7 @@ class TComCodingStatistics
     static Void IncrementStatisticEP(const TComCodingStatisticsClassType &stat, const Int numBits, const Int value)
     {
       SStat &s=GetStatisticEP(stat);
-      s.bits+=numBits;
+      s.bits+=numBits; // basic block vectorized
       s.count++;
       s.sum+=value;
     }

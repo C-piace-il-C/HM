@@ -111,7 +111,7 @@ static Void offsetSubTUCBFs(TComTU &rTu, const ComponentID compID)
 }
 
 
-TEncSearch::TEncSearch()
+TEncSearch::TEncSearch() // loop vectorized
 {
   for (UInt ch=0; ch<MAX_NUM_COMPONENT; ch++)
   {

@@ -76,7 +76,7 @@ Void TAppEncTop::xInitLibCfg()
     vps.setTemporalNestingFlag(true);
   }
   vps.setMaxLayers                                                ( 1 );
-  for(Int i = 0; i < MAX_TLAYER; i++)
+  for(Int i = 0; i < MAX_TLAYER; i++) // loop vectorized 
   {
     vps.setNumReorderPics                                         ( m_numReorderPics[i], i );
     vps.setMaxDecPicBuffering                                     ( m_maxDecPicBuffering[i], i );
@@ -113,7 +113,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setGOPSize                                           ( m_iGOPSize );
   m_cTEncTop.setGopList                                           ( m_GOPList );
   m_cTEncTop.setExtraRPSs                                         ( m_extraRPSs );
-  for(Int i = 0; i < MAX_TLAYER; i++)
+  for(Int i = 0; i < MAX_TLAYER; i++) // loop vectorized + versioned
   {
     m_cTEncTop.setNumReorderPics                                  ( m_numReorderPics[i], i );
     m_cTEncTop.setMaxDecPicBuffering                              ( m_maxDecPicBuffering[i], i );
@@ -307,7 +307,7 @@ Void TAppEncTop::xInitLibCfg()
   {
     m_cTEncTop.setTimeSet(m_timeSetArray[i], i);
   }
-  m_cTEncTop.setKneeSEIEnabled                                    ( m_kneeSEIEnabled );
+  m_cTEncTop.setKneeSEIEnabled                                    ( m_kneeSEIEnabled ); // basic block vectorized
   m_cTEncTop.setKneeSEIId                                         ( m_kneeSEIId );
   m_cTEncTop.setKneeSEICancelFlag                                 ( m_kneeSEICancelFlag );
   m_cTEncTop.setKneeSEIPersistenceFlag                            ( m_kneeSEIPersistenceFlag );

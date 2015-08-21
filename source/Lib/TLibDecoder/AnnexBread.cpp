@@ -80,7 +80,7 @@ _byteStreamNALUnit(
   {
     uint8_t leading_zero_8bits = bs.readByte();
 #if RExt__DECODER_DEBUG_BIT_STATISTICS
-    statBits.bits+=8; statBits.count++;
+    statBits.bits+=8; statBits.count++; // basic block vectorized
 #endif
     assert(leading_zero_8bits == 0);
     stats.m_numLeadingZero8BitsBytes++;
@@ -98,7 +98,7 @@ _byteStreamNALUnit(
   {
     uint8_t zero_byte = bs.readByte();
 #if RExt__DECODER_DEBUG_BIT_STATISTICS
-    statBits.bits+=8; statBits.count++;
+    statBits.bits+=8; statBits.count++; // basic block vectorized 
 #endif
     assert(zero_byte == 0);
     stats.m_numZeroByteBytes++;
@@ -137,7 +137,7 @@ _byteStreamNALUnit(
   while (bs.eofBeforeNBytes(24/8) || bs.peekBytes(24/8) > 2)
   {
 #if RExt__DECODER_DEBUG_BIT_STATISTICS
-    uint8_t thebyte=bs.readByte();bodyStats.bits+=8;bodyStats.count++;
+    uint8_t thebyte=bs.readByte();bodyStats.bits+=8;bodyStats.count++; // basic block vectorized 
     nalUnit.push_back(thebyte);
 #else
     nalUnit.push_back(bs.readByte());
@@ -155,16 +155,16 @@ _byteStreamNALUnit(
    * at a time, until the current position in the byte stream is such that:
    *  - the next bytes in the byte stream form the four-byte sequence
    *    0x00000001 or
-   *  - the end of the byte stream has been encountered (as determined by
+   *  - the end of the byte stream has been encountered (as determined by 
    *    unspecified means).
-   */
+   */ 
   /* NB, (3) guarantees there are at least three bytes available or none */
   while ((bs.eofBeforeNBytes(24/8) || bs.peekBytes(24/8) != 0x000001)
   &&     (bs.eofBeforeNBytes(32/8) || bs.peekBytes(32/8) != 0x00000001))
   {
     uint8_t trailing_zero_8bits = bs.readByte();
 #if RExt__DECODER_DEBUG_BIT_STATISTICS
-    statBits.bits+=8; statBits.count++;
+    statBits.bits+=8; statBits.count++; // basic block vectorized
 #endif
     assert(trailing_zero_8bits == 0);
     stats.m_numTrailingZero8BitsBytes++;

@@ -45,7 +45,7 @@ using namespace std;
 //sequence level
 TEncRCSeq::TEncRCSeq()
 {
-  m_totalFrames         = 0;
+  m_totalFrames         = 0; // basic block vectorized
   m_targetRate          = 0;
   m_frameRate           = 0;
   m_targetBits          = 0;
@@ -286,7 +286,7 @@ Void TEncRCSeq::setAllBitRatio( Double basicLambda, Double* equaCoeffA, Double* 
 //GOP level
 TEncRCGOP::TEncRCGOP()
 {
-  m_encRCSeq  = NULL;
+  m_encRCSeq  = NULL; // basic block vectorized
   m_picTargetBitInGOP = NULL;
   m_numPic     = 0;
   m_targetBits = 0;
@@ -378,7 +378,7 @@ Void TEncRCGOP::create( TEncRCSeq* encRCSeq, Int numPic )
     m_picTargetBitInGOP[i] = (Int)( ((Double)targetBits) * currPicRatio / totalPicRatio );
   }
 
-  m_encRCSeq    = encRCSeq;
+  m_encRCSeq    = encRCSeq; // basci block
   m_numPic       = numPic;
   m_targetBits   = targetBits;
   m_picLeft      = m_numPic;
@@ -465,7 +465,7 @@ Int TEncRCGOP::xEstGOPTargetBits( TEncRCSeq* encRCSeq, Int GOPSize )
 //picture level
 TEncRCPic::TEncRCPic()
 {
-  m_encRCSeq = NULL;
+  m_encRCSeq = NULL; // basic block
   m_encRCGOP = NULL;
 
   m_frameLevel    = 0;
@@ -1235,28 +1235,28 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
     {
       if ( bpp > 0.2 )
       {
-        bitsRatio[0] = 2;
+        bitsRatio[0] = 2; // basic block vectorized
         bitsRatio[1] = 3;
         bitsRatio[2] = 2;
         bitsRatio[3] = 6;
       }
       else if( bpp > 0.1 )
       {
-        bitsRatio[0] = 2;
+        bitsRatio[0] = 2; // basic block vectorized
         bitsRatio[1] = 3;
         bitsRatio[2] = 2;
         bitsRatio[3] = 10;
       }
       else if ( bpp > 0.05 )
       {
-        bitsRatio[0] = 2;
+        bitsRatio[0] = 2; // basic block vectorized
         bitsRatio[1] = 3;
         bitsRatio[2] = 2;
         bitsRatio[3] = 12;
       }
       else
       {
-        bitsRatio[0] = 2;
+        bitsRatio[0] = 2; // basic block vectorized
         bitsRatio[1] = 3;
         bitsRatio[2] = 2;
         bitsRatio[3] = 14;
@@ -1271,7 +1271,7 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
     {
       if ( bpp > 0.2 )
       {
-        bitsRatio[0] = 15;
+        bitsRatio[0] = 15; // basic block vectorized
         bitsRatio[1] = 5;
         bitsRatio[2] = 4;
         bitsRatio[3] = 1;
@@ -1282,7 +1282,7 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
       }
       else if ( bpp > 0.1 )
       {
-        bitsRatio[0] = 20;
+        bitsRatio[0] = 20; // basic block vectorized
         bitsRatio[1] = 6;
         bitsRatio[2] = 4;
         bitsRatio[3] = 1;
@@ -1293,7 +1293,7 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
       }
       else if ( bpp > 0.05 )
       {
-        bitsRatio[0] = 25;
+        bitsRatio[0] = 25; // basic block vectorized
         bitsRatio[1] = 7;
         bitsRatio[2] = 4;
         bitsRatio[3] = 1;
@@ -1304,7 +1304,7 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
       }
       else
       {
-        bitsRatio[0] = 30;
+        bitsRatio[0] = 30; // basic block vectorized
         bitsRatio[1] = 8;
         bitsRatio[2] = 4;
         bitsRatio[3] = 1;
@@ -1339,7 +1339,7 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
   {
     if ( GOPSize == 4 && isLowdelay )
     {
-      GOPID2Level[0] = 3;
+      GOPID2Level[0] = 3; // basic block vectorized
       GOPID2Level[1] = 2;
       GOPID2Level[2] = 3;
       GOPID2Level[3] = 1;
@@ -1359,7 +1359,7 @@ Void TEncRateCtrl::init( Int totalFrames, Int targetBitrate, Int frameRate, Int 
 
   if ( !isLowdelay && GOPSize == 8 )
   {
-    GOPID2Level[0] = 1;
+    GOPID2Level[0] = 1; // basic block vectorized
     GOPID2Level[1] = 2;
     GOPID2Level[2] = 3;
     GOPID2Level[3] = 4;

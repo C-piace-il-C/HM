@@ -386,7 +386,7 @@ protected:
 public:
   TEncCfg()
   : m_tileColumnWidth()
-  , m_tileRowHeight()
+  , m_tileRowHeight() // basic block vectorized
   {
     m_PCMBitDepth[CHANNEL_TYPE_LUMA]=8;
     m_PCMBitDepth[CHANNEL_TYPE_CHROMA]=8;

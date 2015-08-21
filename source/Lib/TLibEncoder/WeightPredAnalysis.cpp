@@ -89,7 +89,7 @@ Void WeightPredAnalysis::xCalcACDCParamSlice(TComSlice *const slice)
 
       for(Int y = 0; y < iHeight; y++, pPel+=iStride )
       {
-        for(Int x = 0; x < iWidth; x++ )
+        for(Int x = 0; x < iWidth; x++ ) // loop vectorized + peeled
         {
           iOrgDC += (Int)( pPel[x] );
         }
@@ -104,7 +104,7 @@ Void WeightPredAnalysis::xCalcACDCParamSlice(TComSlice *const slice)
 
       for(Int y = 0; y < iHeight; y++, pPel += iStride )
       {
-        for(Int x = 0; x < iWidth; x++ )
+        for(Int x = 0; x < iWidth; x++ ) // loop vectorized + peeled
         {
           iOrgAC += abs( (Int)pPel[x] - (Int)iOrgNormDC );
         }
