@@ -46,7 +46,7 @@ static Void md5_block(MD5& md5, const Pel* plane, UInt n)
 {
   /* create a 64 byte buffer for packing Pel's into */
   UChar buf[64/OUTPUT_BITDEPTH_DIV8][OUTPUT_BITDEPTH_DIV8];
-  for (UInt i = 0; i < n; i++)
+  for (UInt i = 0; i < n; i++) // loop vectorized.
   {
     Pel pel = plane[i];
     /* perform bitdepth and endian conversion */
@@ -145,7 +145,7 @@ UInt compChecksum(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt 
 
   for (UInt y = 0; y < height; y++)
   {
-    for (UInt x = 0; x < width; x++)
+    for (UInt x = 0; x < width; x++) // loop vectorized + peeled.
     {
       xor_mask = (x & 0xff) ^ (y & 0xff) ^ (x >> 8) ^ (y >> 8);
       checksum = (checksum + ((plane[y*stride+x] & 0xff) ^ xor_mask)) & 0xffffffff;
