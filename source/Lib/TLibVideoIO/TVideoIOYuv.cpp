@@ -73,7 +73,7 @@ static Void scalePlane(Pel* img, const UInt stride, const UInt width, const UInt
   {
     for (UInt y = 0; y < height; y++, img+=stride)
     {
-      for (UInt x = 0; x < width; x++)
+      for (UInt x = 0; x < width; x++) // loop vectorized + peeled.
       {
         img[x] <<= shiftbits;
       }
@@ -86,7 +86,7 @@ static Void scalePlane(Pel* img, const UInt stride, const UInt width, const UInt
     Pel rounding = 1 << (shiftbits-1);
     for (UInt y = 0; y < height; y++, img+=stride)
     {
-      for (UInt x = 0; x < width; x++)
+      for (UInt x = 0; x < width; x++) // loop vectorized + peeled.
       {
         img[x] = Clip3(minval, maxval, Pel((img[x] + rounding) >> shiftbits));
       }
@@ -287,7 +287,7 @@ static Bool readPlane(Pel* dst,
       const Pel value=Pel(1<<(fileBitDepth-1));
       for (UInt y = 0; y < full_height_dest; y++, dst+=stride_dest)
       {
-        for (UInt x = 0; x < full_width_dest; x++)
+        for (UInt x = 0; x < full_width_dest; x++) // loop vectorized + peeled.
         {
           dst[x] = value;
         }
@@ -367,7 +367,7 @@ static Bool readPlane(Pel* dst,
 
         // process right hand side padding
         const Pel val=dst[width_dest-1];
-        for (UInt x = width_dest; x < full_width_dest; x++)
+        for (UInt x = width_dest; x < full_width_dest; x++) // loop vectorized + peeled.
         {
           dst[x] = val;
         }
@@ -379,7 +379,7 @@ static Bool readPlane(Pel* dst,
     // process lower padding
     for (UInt y = height_dest; y < full_height_dest; y++, dst+=stride_dest)
     {
-      for (UInt x = 0; x < full_width_dest; x++)
+      for (UInt x = 0; x < full_width_dest; x++) // loop vectorized + peeled.
       {
         dst[x] = (dst - stride_dest)[x];
       }
@@ -474,7 +474,7 @@ static Bool writePlane(ostream& fd, Pel* src, Bool is16bit,
         {
           // eg file is 444, source is 422.
           const UInt sx=csx_src-csx_file;
-          if (!is16bit)
+          if (!is16bit) // loop vectorized.
           {
             for (UInt x = 0; x < width_file; x++)
             {
@@ -575,7 +575,7 @@ static Bool writeField(ostream& fd, Pel* top, Pel* bottom, Bool is16bit,
           else
           {
             UShort val(value);
-            for (UInt x = 0; x < width_file; x++)
+            for (UInt x = 0; x < width_file; x++) // loop vectorized.
             {
               fieldBuffer[2*x+0]= (val>>0) & 0xff;
               fieldBuffer[2*x+1]= (val>>8) & 0xff;
