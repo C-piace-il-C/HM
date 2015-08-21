@@ -277,7 +277,7 @@ Void TComPrediction::initIntraPatternChType( TComTU &rTu, Bool& bAbove, Bool& bL
       {
         const Int shift = g_aucConvertToBit[uiTuWidth] + 3; //log2(uiTuWidth2)
 
-        for(UInt i=1; i<uiTuWidth2; i++, piDestPtr++)
+        for(UInt i=1; i<uiTuWidth2; i++, piDestPtr++)  // loop vectorized + peeled.
         {
           *piDestPtr = (((uiTuWidth2 - i) * topLeft) + (i * topRight) + uiTuWidth) >> shift;
         }
@@ -286,7 +286,7 @@ Void TComPrediction::initIntraPatternChType( TComTU &rTu, Bool& bAbove, Bool& bL
       }
       else
       {
-        for(UInt i=1; i<uiTuWidth2; i++, piDestPtr++, piSrcPtr++)
+        for(UInt i=1; i<uiTuWidth2; i++, piDestPtr++, piSrcPtr++) // loop vectorized + peeled.
         {
           *piDestPtr = ( piSrcPtr[1] + 2*piSrcPtr[0] + piSrcPtr[-1] + 2 ) >> 2;
         }
@@ -346,7 +346,7 @@ Void fillReferenceSamples( const Int bitDepth,
   if (iNumIntraNeighbor == 0)
   {
     // Fill border with DC value
-    for (i=0; i<uiWidth; i++)
+    for (i=0; i<uiWidth; i++) // loop vectorized + peeled.
     {
       piIntraTemp[i] = iDCValue;
     }
@@ -360,7 +360,7 @@ Void fillReferenceSamples( const Int bitDepth,
     // Fill top-left border and top and top right with rec. samples
     piRoiTemp = piRoiOrigin - iPicStride - 1;
 
-    for (i=0; i<uiWidth; i++)
+    for (i=0; i<uiWidth; i++) // loop vectorized + peeled.
     {
 #if O0043_BEST_EFFORT_DECODING
       piIntraTemp[i] = piRoiTemp[i] << bitDepthDelta;
@@ -392,7 +392,7 @@ Void fillReferenceSamples( const Int bitDepth,
 
 
     // Initialize
-    for (i=0; i<iTotalSamples; i++)
+    for (i=0; i<iTotalSamples; i++) // loop vectorized.
     {
       piIntraLine[i] = iDCValue;
     }
@@ -408,7 +408,7 @@ Void fillReferenceSamples( const Int bitDepth,
 #else
       Pel topLeftVal=piRoiTemp[0];
 #endif
-      for (i=0; i<unitWidth; i++)
+      for (i=0; i<unitWidth; i++) // loop vectorized + peeled.
       {
         piIntraLineTemp[i] = topLeftVal;
       }
@@ -423,7 +423,7 @@ Void fillReferenceSamples( const Int bitDepth,
     {
       if (*pbNeighborFlags)
       {
-        for (i=0; i<unitHeight; i++)
+        for (i=0; i<unitHeight; i++) // loop vectorized + peeled.
         {
 #if O0043_BEST_EFFORT_DECODING
           piIntraLineTemp[-i] = piRoiTemp[i*iPicStride] << bitDepthDelta;
@@ -481,7 +481,7 @@ Void fillReferenceSamples( const Int bitDepth,
         // fill left column
         while (iCurrJnit < iNextOrTop)
         {
-          for (i=0; i<unitHeight; i++)
+          for (i=0; i<unitHeight; i++) // loop vectorized + peeled.
           {
             piIntraLineCur[i] = refSample;
           }
@@ -491,7 +491,7 @@ Void fillReferenceSamples( const Int bitDepth,
         // fill top row
         while (iCurrJnit < iNext)
         {
-          for (i=0; i<unitWidth; i++)
+          for (i=0; i<unitWidth; i++) // loop vectorized + peeled.
           {
             piIntraLineCur[i] = refSample;
           }
@@ -509,7 +509,7 @@ Void fillReferenceSamples( const Int bitDepth,
         {
           const Int numSamplesInCurrUnit = (iCurrJnit >= iLeftUnits) ? unitWidth : unitHeight;
           const Pel refSample = *(piIntraLineCur-1);
-          for (i=0; i<numSamplesInCurrUnit; i++)
+          for (i=0; i<numSamplesInCurrUnit; i++) // loop vectorized + peeled.
           {
             piIntraLineCur[i] = refSample;
           }
