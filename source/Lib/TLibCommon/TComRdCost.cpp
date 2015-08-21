@@ -475,7 +475,7 @@ Distortion TComRdCost::xGetSAD( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-- )
   {
-    for (Int n = 0; n < iCols; n++ )
+    for (Int n = 0; n < iCols; n++ ) // loop vectorized + peeled.
     {
       uiSum += abs( piOrg[n] - piCur[n] );
     }
@@ -649,7 +649,7 @@ Distortion TComRdCost::xGetSAD16N( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    for (Int n = 0; n < iCols; n+=16 )
+    for (Int n = 0; n < iCols; n+=16 ) // loop vectorized.
     {
       uiSum += abs( piOrg[n+ 0] - piCur[n+ 0] );
       uiSum += abs( piOrg[n+ 1] - piCur[n+ 1] );
@@ -976,7 +976,7 @@ Distortion TComRdCost::xGetSSE( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-- )
   {
-    for (Int n = 0; n < iCols; n++ )
+    for (Int n = 0; n < iCols; n++ ) // loop vectorized + peeled.
     {
       iTemp = piOrg[n  ] - piCur[n  ];
       uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
@@ -1006,7 +1006,7 @@ Distortion TComRdCost::xGetSSE4( DistParam* pcDtParam )
 
   Intermediate_Int  iTemp;
 
-  for( ; iRows != 0; iRows-- )
+  for( ; iRows != 0; iRows-- ) // loop vectorized.
   {
 
     iTemp = piOrg[0] - piCur[0]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
@@ -1039,7 +1039,7 @@ Distortion TComRdCost::xGetSSE8( DistParam* pcDtParam )
 
   Intermediate_Int  iTemp;
 
-  for( ; iRows != 0; iRows-- )
+  for( ; iRows != 0; iRows-- ) // loop vectorized.
   {
     iTemp = piOrg[0] - piCur[0]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
     iTemp = piOrg[1] - piCur[1]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
@@ -1075,7 +1075,7 @@ Distortion TComRdCost::xGetSSE16( DistParam* pcDtParam )
 
   Intermediate_Int  iTemp;
 
-  for( ; iRows != 0; iRows-- )
+  for( ; iRows != 0; iRows-- ) // loop vectorized.
   {
 
     iTemp = piOrg[ 0] - piCur[ 0]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
@@ -1122,7 +1122,7 @@ Distortion TComRdCost::xGetSSE16N( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-- )
   {
-    for (Int n = 0; n < iCols; n+=16 )
+    for (Int n = 0; n < iCols; n+=16 ) // loop vectorized.
     {
 
       iTemp = piOrg[n+ 0] - piCur[n+ 0]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
@@ -1168,7 +1168,7 @@ Distortion TComRdCost::xGetSSE32( DistParam* pcDtParam )
 
   Intermediate_Int  iTemp;
 
-  for( ; iRows != 0; iRows-- )
+  for( ; iRows != 0; iRows-- ) // loop vectorized.
   {
 
     iTemp = piOrg[ 0] - piCur[ 0]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
