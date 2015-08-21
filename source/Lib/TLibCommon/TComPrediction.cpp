@@ -188,14 +188,14 @@ Pel TComPrediction::predIntraGetPredValDC( const Pel* pSrc, Int iSrcStride, UInt
 
   if (bAbove)
   {
-    for (iInd = 0;iInd < iWidth;iInd++)
+    for (iInd = 0;iInd < iWidth;iInd++) // loop vectorized + peeled.
     {
       iSum += pSrc[iInd-iSrcStride];
     }
   }
   if (bLeft)
   {
-    for (iInd = 0;iInd < iHeight;iInd++)
+    for (iInd = 0;iInd < iHeight;iInd++) // loop vectorized.
     {
       iSum += pSrc[iInd*iSrcStride-1];
     }
@@ -269,7 +269,8 @@ Void TComPrediction::xPredIntraAng(       Int bitDepth,
 
     for (Int y=height;y>0;y--, pTrueDst+=dstStrideTrue)
     {
-      for (Int x=0; x<width;) // width is always a multiple of 4.
+      // width is always a multiple of 4.
+      for (Int x=0; x<width;)  // loop vectorized + peeled.
       {
         pTrueDst[x++] = dcval;
       }
@@ -301,7 +302,7 @@ Void TComPrediction::xPredIntraAng(       Int bitDepth,
     {
       const Int refMainOffsetPreScale = (bIsModeVer ? height : width ) - 1;
       const Int refMainOffset         = height - 1;
-      for (Int x=0;x<width+1;x++)
+      for (Int x=0;x<width+1;x++) // loop vectorized + peeled.
       {
         refAbove[x+refMainOffset] = pSrc[x-srcStride-1];
       }
@@ -322,7 +323,7 @@ Void TComPrediction::xPredIntraAng(       Int bitDepth,
     }
     else
     {
-      for (Int x=0;x<2*width+1;x++)
+      for (Int x=0;x<2*width+1;x++) // loop vectorized.
       {
         refAbove[x] = pSrc[x-srcStride-1];
       }
@@ -450,7 +451,7 @@ Void TComPrediction::predIntraAng( const ComponentID compID, UInt uiDirMode, Pel
     {
       // top row filled with reference samples
       // remaining rows filled with piOrd data (if available)
-      for(Int x=0; x<iWidth; x++)
+      for(Int x=0; x<iWidth; x++) // loop vectorized + peeled.
       {
         piPred[x] = ptrSrc[x+1];
       }
@@ -762,12 +763,12 @@ Void TComPrediction::xPredIntraPlanar( const Pel* pSrc, Int srcStride, Pel* rpDs
   UInt shift1Dver = g_aucConvertToBit[ height ] + 2;
 
   // Get left and above reference column and row
-  for(Int k=0;k<width+1;k++)
+  for(Int k=0;k<width+1;k++) // loop vectorized.
   {
     topRow[k] = pSrc[k-srcStride];
   }
 
-  for (Int k=0; k < height+1; k++)
+  for (Int k=0; k < height+1; k++) // loop vectorized.
   {
     leftColumn[k] = pSrc[k*srcStride-1];
   }
@@ -776,13 +777,13 @@ Void TComPrediction::xPredIntraPlanar( const Pel* pSrc, Int srcStride, Pel* rpDs
   Int bottomLeft = leftColumn[height];
   Int topRight   = topRow[width];
 
-  for(Int k=0;k<width;k++)
+  for(Int k=0;k<width;k++) // loop vectorized.
   {
     bottomRow[k]  = bottomLeft - topRow[k];
     topRow[k]     <<= shift1Dver;
   }
 
-  for(Int k=0;k<height;k++)
+  for(Int k=0;k<height;k++) // loop vectorized.
   {
     rightColumn[k]  = topRight - leftColumn[k];
     leftColumn[k]   <<= shift1Dhor;
@@ -794,7 +795,7 @@ Void TComPrediction::xPredIntraPlanar( const Pel* pSrc, Int srcStride, Pel* rpDs
   for (Int y=0;y<height;y++)
   {
     Int horPred = leftColumn[y] + width;
-    for (Int x=0;x<width;x++)
+    for (Int x=0;x<width;x++) // loop vectorized.
     {
       horPred += rightColumn[y];
       topRow[x] += bottomRow[x];
@@ -826,7 +827,7 @@ Void TComPrediction::xDCPredFiltering( const Pel* pSrc, Int iSrcStride, Pel* pDs
     pDst[0] = (Pel)((pSrc[-iSrcStride] + pSrc[-1] + 2 * pDst[0] + 2) >> 2);
 
     //top row (vertical filter)
-    for ( x = 1; x < iWidth; x++ )
+    for ( x = 1; x < iWidth; x++ ) // loop vectorized + peeled.
     {
       pDst[x] = (Pel)((pSrc[x - iSrcStride] +  3 * pDst[x] + 2) >> 2);
     }
