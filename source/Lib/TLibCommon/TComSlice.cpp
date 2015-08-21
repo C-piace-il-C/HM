@@ -734,7 +734,7 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
 
   for (i = 0; i < NUM_REF_PIC_LIST_01; i++)
   {
-    for (j = 0; j < MAX_NUM_REF; j++)
+    for (j = 0; j < MAX_NUM_REF; j++) // loop vectorized.
     {
       for (k =0; k < MAX_NUM_REF; k++)
       {
@@ -1401,7 +1401,7 @@ Void  TComSlice::getWpAcDcParam(WPACDCParam *&wp)
 //! init AC and DC values for weighted pred
 Void  TComSlice::initWpAcDcParam()
 {
-  for(Int iComp = 0; iComp < MAX_NUM_COMPONENT; iComp++ )
+  for(Int iComp = 0; iComp < MAX_NUM_COMPONENT; iComp++ ) // loop vectorized.
   {
     m_weightACDCParam[iComp].iAC = 0;
     m_weightACDCParam[iComp].iDC = 0;
@@ -1787,7 +1787,7 @@ TComRefPicListModification::~TComRefPicListModification()
 {
 }
 
-TComScalingList::TComScalingList()
+TComScalingList::TComScalingList() // loop vectorized.
 {
   for(UInt sizeId = 0; sizeId < SCALING_LIST_SIZE_NUM; sizeId++)
   {
@@ -1953,7 +1953,7 @@ Bool TComScalingList::xParseScalingList(TChar* pchFile)
       if ((sizeIdc==SCALING_LIST_32x32) && (listIdc%(SCALING_LIST_NUM/NUMBER_OF_PREDICTION_MODES) != 0)) // derive chroma32x32 from chroma16x16
       {
         const Int *srcNextSmallerSize = getScalingListAddress(sizeIdc-1, listIdc);
-        for(UInt i=0; i<size; i++)
+        for(UInt i=0; i<size; i++) // loop vectorized + peeled.
         {
           src[i] = srcNextSmallerSize[i];
         }
