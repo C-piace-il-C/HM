@@ -1336,7 +1336,7 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   TCoeff diff[16], m[16], d[16];
 
   assert( iStep == 1 );
-  for( k = 0; k < 16; k+=4 )
+  for( k = 0; k < 16; k+=4 ) // loop vectorized
   {
     diff[k+0] = piOrg[0] - piCur[0];
     diff[k+1] = piOrg[1] - piCur[1];
@@ -1416,7 +1416,7 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   d[14] = m[14] + m[15];
   d[15] = m[15] - m[14];
 
-  for (k=0; k<16; ++k)
+  for (k=0; k<16; ++k) // loop vectorized
   {
     satd += abs(d[k]);
   }
@@ -1431,7 +1431,7 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   Distortion sad = 0;
   TCoeff diff[64], m1[8][8], m2[8][8], m3[8][8];
   assert( iStep == 1 );
-  for( k = 0; k < 64; k += 8 )
+  for( k = 0; k < 64; k += 8 ) // loop vectorized
   {
     diff[k+0] = piOrg[0] - piCur[0];
     diff[k+1] = piOrg[1] - piCur[1];
@@ -1479,7 +1479,7 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   }
 
   //vertical
-  for (i=0; i < 8; i++)
+  for (i=0; i < 8; i++) // loop vectorized
   {
     m3[0][i] = m2[0][i] + m2[4][i];
     m3[1][i] = m2[1][i] + m2[5][i];
@@ -1509,7 +1509,7 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
     m2[7][i] = m1[6][i] - m1[7][i];
   }
 
-  for (i = 0; i < 8; i++)
+  for (i = 0; i < 8; i++) // loop vectorized
   {
     for (j = 0; j < 8; j++)
     {

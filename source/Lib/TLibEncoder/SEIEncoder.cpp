@@ -138,7 +138,7 @@ Void SEIEncoder::initSEIToneMappingInfo(SEIToneMappingInfo *seiToneMappingInfo)
       Int* ptmp = m_pcCfg->getTMISEIStartOfCodedInterva();
       if(ptmp)
       {
-        for(Int i=0; i<num;i++)
+        for(Int i=0; i<num;i++) // loop vectorized + versioned + peeled 
         {
           seiToneMappingInfo->m_startOfCodedInterval[i] = ptmp[i];
         }
@@ -350,7 +350,7 @@ Void SEIEncoder::initSEITempMotionConstrainedTileSets (SEITempMotionConstrainedT
       sei->tileSetData(i).m_mcts_id = i;  //depends the application;
       sei->tileSetData(i).setNumberOfTileRects(1);
 
-      for(Int j=0; j<sei->tileSetData(i).getNumberOfTileRects(); j++)
+      for(Int j=0; j<sei->tileSetData(i).getNumberOfTileRects(); j++) // loop vectorized + versioned + peeled
       {
         sei->tileSetData(i).topLeftTileIndex(j)     = i+j;
         sei->tileSetData(i).bottomRightTileIndex(j) = i+j;

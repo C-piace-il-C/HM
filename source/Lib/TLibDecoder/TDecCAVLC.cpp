@@ -704,7 +704,7 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
   
   Int maxCUDepthDelta = uiCode;
-  pcSPS->setMaxCUWidth  ( 1<<(log2MinCUSize + maxCUDepthDelta) );
+  pcSPS->setMaxCUWidth  ( 1<<(log2MinCUSize + maxCUDepthDelta) ); // basic block vectorized
   pcSPS->setMaxCUHeight ( 1<<(log2MinCUSize + maxCUDepthDelta) );
   READ_UVLC( uiCode, "log2_min_luma_transform_block_size_minus2" );   pcSPS->setQuadtreeTULog2MinSize( uiCode + 2 );
 
@@ -1944,7 +1944,7 @@ Void TDecCavlc::parseScalingList(TComScalingList* scalingList)
         Int *src = scalingList->getScalingListAddress(sizeId, listId);
         const Int size = min(MAX_MATRIX_COEF_NUM,(Int)g_scalingListSize[sizeId]);
         const Int *srcNextSmallerSize = scalingList->getScalingListAddress(sizeId-1, listId);
-        for(Int i=0; i<size; i++)
+        for(Int i=0; i<size; i++) // loop vectorized + versioned + peeled
         {
           src[i] = srcNextSmallerSize[i];
         }

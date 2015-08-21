@@ -611,7 +611,7 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
     }
 #endif
 
-    for( UInt uiX = 0; uiX < uiWidth; uiX++ )
+    for( UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + versioned for vectorization
     {
 #if DEBUG_STRING
       if (bDebugResi)
@@ -767,7 +767,7 @@ Void TDecCu::xDecodePCMTexture( TComDataCU* pcCU, const UInt uiPartIdx, const Pe
 
   for(UInt uiY = 0; uiY < uiHeight; uiY++ )
   {
-    for(UInt uiX = 0; uiX < uiWidth; uiX++ )
+    for(UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + versioned for vectorization + peeled
     {
       piReco[uiX] = (piPCM[uiX] << uiPcmLeftShiftBit);
       piPicReco[uiX] = piReco[uiX];
@@ -824,7 +824,7 @@ Void TDecCu::xFillPCMBuffer(TComDataCU* pCU, UInt depth)
 
     for (Int line = 0; line < height; line++)
     {
-      for (Int column = 0; column < width; column++)
+      for (Int column = 0; column < width; column++) // loop vectorized + versioned + peeled
       {
         destination[column] = source[column];
       }

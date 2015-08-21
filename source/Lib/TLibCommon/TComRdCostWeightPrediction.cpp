@@ -74,7 +74,7 @@ Distortion TComRdCostWeightPrediction::xGetSADw( DistParam* pcDtParam )
 
   for(Int iRows = pcDtParam->iRows; iRows != 0; iRows-- )
   {
-    for (Int n = 0; n < iCols; n++ )
+    for (Int n = 0; n < iCols; n++ ) // loop vectorized + peeled 
     {
       const Pel pred = ( (w0*piCur[n] + round) >> shift ) + offset ;
 
@@ -120,7 +120,7 @@ Distortion TComRdCostWeightPrediction::xGetSSEw( DistParam* pcDtParam )
 
   for(Int iRows = pcDtParam->iRows ; iRows != 0; iRows-- )
   {
-    for (Int n = 0; n < iCols; n++ )
+    for (Int n = 0; n < iCols; n++ )  // loop vectorized + peeled 
     {
       const Pel pred     = ( (w0*piCur[n] + round) >> shift ) + offset ;
       const Pel residual = piOrg[n] - pred;
@@ -190,7 +190,7 @@ Distortion xCalcHADs4x4w( const WPScalingParam &wpCur, const Pel *piOrg, const P
   TCoeff     d[16];
 
 
-  for(Int k = 0; k < 16; k+=4 )
+  for(Int k = 0; k < 16; k+=4 ) // loop vectorized
   {
     Pel pred;
     pred      = ( (w0*piCur[0*iStep] + round) >> shift ) + offset ;
@@ -452,7 +452,7 @@ Distortion TComRdCostWeightPrediction::xGetHADsw( DistParam* pcDtParam )
   {
     for (Int y=0; y<iRows; y+=2 )
     {
-      for (Int x=0; x<iCols; x+=2 )
+      for (Int x=0; x<iCols; x+=2 ) // loop vectorized
       {
         uiSum += xCalcHADs2x2w( wpCur, &piOrg[x], &piCur[x*iStep], iStrideOrg, iStrideCur, iStep );
       }

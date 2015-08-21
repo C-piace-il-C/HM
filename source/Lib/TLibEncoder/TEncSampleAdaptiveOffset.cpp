@@ -122,7 +122,7 @@ Void TEncSampleAdaptiveOffset::createEncData(Bool isPreDBFSamplesUsed)
 
   for(Int typeIdc=0; typeIdc < NUM_SAO_NEW_TYPES; typeIdc++)
   {
-    m_skipLinesR[COMPONENT_Y ][typeIdc]= 5;
+    m_skipLinesR[COMPONENT_Y ][typeIdc]= 5; // basic block vectorized
     m_skipLinesR[COMPONENT_Cb][typeIdc]= m_skipLinesR[COMPONENT_Cr][typeIdc]= 3;
 
     m_skipLinesB[COMPONENT_Y ][typeIdc]= 4;
@@ -1013,7 +1013,7 @@ Void TEncSampleAdaptiveOffset::getBlkStats(const ComponentID compIdx, const Int 
         }
 
         Pel* srcLineAbove = srcLine - srcStride;
-        for (x=startX; x<endX; x++)
+        for (x=startX; x<endX; x++) // loop vectorized + versioned + peeled
         {
           //signUpLine[x] = (Char)sgn(srcLine[x] - srcLineAbove[x]);
           signUpLine[x] = (SChar)sgn(srcLine[x] - srcLineAbove[x]);
@@ -1084,7 +1084,7 @@ Void TEncSampleAdaptiveOffset::getBlkStats(const ComponentID compIdx, const Int 
 
         //prepare 2nd line's upper sign
         Pel* srcLineBelow = srcLine + srcStride;
-        for (x=startX; x<endX+1; x++)
+        for (x=startX; x<endX+1; x++) // vectorized + versioned + peeled
         {
           //signUpLine[x] = (Char)sgn(srcLineBelow[x] - srcLine[x-1]);
           signUpLine[x] = (SChar)sgn(srcLineBelow[x] - srcLine[x-1]);
@@ -1171,7 +1171,7 @@ Void TEncSampleAdaptiveOffset::getBlkStats(const ComponentID compIdx, const Int 
 
         //prepare 2nd line upper sign
         Pel* srcLineBelow = srcLine + srcStride;
-        for (x=startX-1; x<endX; x++)
+        for (x=startX-1; x<endX; x++) // loop vectorized + versioned + peeled
         {
           //signUpLine[x] = (Char)sgn(srcLineBelow[x] - srcLine[x+1]);
           signUpLine[x] = (SChar)sgn(srcLineBelow[x] - srcLine[x+1]);

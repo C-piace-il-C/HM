@@ -458,7 +458,7 @@ Void TDecEntropy::xDecodeTransform        ( Bool& bCodeDQP, Bool& isChromaQpAdjC
       UChar *pBase = pcCU->getCbf( ComponentID(ch) ) + uiAbsPartIdx;
       const UChar flag = uiYUVCbf[ch] << uiTrDepth;
 
-      for( UInt ui = 0; ui < 4 * uiQPartNum; ++ui )
+      for( UInt ui = 0; ui < 4 * uiQPartNum; ++ui ) // loop vectorized + peeled
       {
         pBase[ui] |= flag;
       }
