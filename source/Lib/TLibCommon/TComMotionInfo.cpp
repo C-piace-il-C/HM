@@ -88,7 +88,7 @@ Void TComCUMvField::destroy()
 
 Void TComCUMvField::clearMvField()
 {
-  for ( Int i = 0; i < m_uiNumPartition; i++ )
+  for ( Int i = 0; i < m_uiNumPartition; i++ ) // loop vectorized.
   {
     m_pcMv [ i ].setZero();
     m_pcMvd[ i ].setZero();
@@ -151,7 +151,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
 
     case SIZE_Nx2N:
       numElements >>= 2;
-      for ( i = 0; i < numElements; i++ )
+      for ( i = 0; i < numElements; i++ ) // loop vectorized + peeled.
       {
         p[ i                   ] = val;
         p[ i + 2 * numElements ] = val;
@@ -172,7 +172,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
       {
         T *pT  = p;
         T *pT2 = p + iCurrPartNumQ;
-        for (i = 0; i < (iCurrPartNumQ>>1); i++)
+        for (i = 0; i < (iCurrPartNumQ>>1); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -214,7 +214,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
       {
         T *pT  = p;
         T *pT2 = p + iCurrPartNumQ;
-        for (i = 0; i < (iCurrPartNumQ>>1); i++)
+        for (i = 0; i < (iCurrPartNumQ>>1); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -232,7 +232,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
         T *pT3 = p + (iCurrPartNumQ>>1);
         T *pT4 = p + (iCurrPartNumQ<<1) + (iCurrPartNumQ>>1);
 
-        for (i = 0; i < (iCurrPartNumQ>>2); i++)
+        for (i = 0; i < (iCurrPartNumQ>>2); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -244,7 +244,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
       {
         T *pT  = p;
         T *pT2 = p + (iCurrPartNumQ<<1);
-        for (i = 0; i < (iCurrPartNumQ>>2); i++)
+        for (i = 0; i < (iCurrPartNumQ>>2); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -252,7 +252,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
 
         pT  = p + (iCurrPartNumQ>>1);
         pT2 = p + (iCurrPartNumQ<<1) + (iCurrPartNumQ>>1);
-        for (i = 0; i < ( (iCurrPartNumQ>>2) + iCurrPartNumQ ); i++)
+        for (i = 0; i < ( (iCurrPartNumQ>>2) + iCurrPartNumQ ); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -267,7 +267,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
       {
         T *pT  = p;
         T *pT2 = p + (iCurrPartNumQ<<1);
-        for (i = 0; i < ( (iCurrPartNumQ>>2) + iCurrPartNumQ ); i++)
+        for (i = 0; i < ( (iCurrPartNumQ>>2) + iCurrPartNumQ ); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -275,7 +275,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
 
         pT  = p + iCurrPartNumQ + (iCurrPartNumQ>>1);
         pT2 = p + numElements - iCurrPartNumQ + (iCurrPartNumQ>>1);
-        for (i = 0; i < (iCurrPartNumQ>>2); i++)
+        for (i = 0; i < (iCurrPartNumQ>>2); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
@@ -287,7 +287,7 @@ Void TComCUMvField::setAll( T *p, T const & val, PartSize eCUMode, Int iPartAddr
         T *pT2 = p + (iCurrPartNumQ>>1);
         T *pT3 = p + (iCurrPartNumQ<<1);
         T *pT4 = p + (iCurrPartNumQ<<1) + (iCurrPartNumQ>>1);
-        for (i = 0; i < (iCurrPartNumQ>>2); i++)
+        for (i = 0; i < (iCurrPartNumQ>>2); i++) // loop vectorized + peeled.
         {
           pT [i] = val;
           pT2[i] = val;
