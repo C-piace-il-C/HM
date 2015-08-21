@@ -1,0 +1,69 @@
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:141:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:141:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:127:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:127:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:218:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:218:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComPicYuv.cpp:218:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:302:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:302:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:302:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:338:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:338:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:338:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:380:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:380:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:394:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:394:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:432:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:432:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:432:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:444:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:444:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComYuv.cpp:444:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:183:5: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:183:5: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:389:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:389:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:389:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:429:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:429:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:429:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:497:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:497:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:497:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:61:43: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:60:43: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComDataCU.cpp:210:30: note: basic block vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:754:5: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:754:5: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComSampleAdaptiveOffset.cpp:754:5: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:91:3: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:91:3: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:154:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:154:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:154:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:175:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:175:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:175:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:217:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:217:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:217:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:235:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:235:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:235:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:255:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:255:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:255:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:247:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:247:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:247:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:278:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:278:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:278:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:270:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:270:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:270:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:290:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:290:9: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibCommon/../../../../source/Lib/TLibCommon/TComMotionInfo.cpp:290:9: note: loop peeled for vectorization to enhance alignment

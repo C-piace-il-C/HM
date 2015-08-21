@@ -1,0 +1,42 @@
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:290:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:290:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:382:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:382:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:382:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:370:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:370:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:447:11: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:578:13: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:290:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:290:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:382:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:382:7: note: loop versioned for vectorization because of possible aliasing
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:382:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:370:9: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:370:9: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:447:11: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:578:13: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:76:7: note: loop peeled for vectorization to enhance alignment
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop vectorized
+/home/cpc/ssd/hm_source/build/linux/lib/TLibVideoIO/../../../../source/Lib/TLibVideoIO/TVideoIOYuv.cpp:89:7: note: loop peeled for vectorization to enhance alignment
