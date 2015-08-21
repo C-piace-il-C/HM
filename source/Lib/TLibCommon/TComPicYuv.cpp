@@ -124,7 +124,7 @@ Void TComPicYuv::create ( const Int iPicWidth,                ///< picture width
 
     for (Int cuRow = 0; cuRow < numCuInHeight; cuRow++)
     {
-      for (Int cuCol = 0; cuCol < numCuInWidth; cuCol++)
+      for (Int cuCol = 0; cuCol < numCuInWidth; cuCol++) // loop vectorized + peeled.
       {
         m_ctuOffsetInBuffer[chan][cuRow * numCuInWidth + cuCol] = stride * cuRow * ctuHeight + cuCol * ctuWidth;
       }
@@ -138,7 +138,7 @@ Void TComPicYuv::create ( const Int iPicWidth,                ///< picture width
 
     for (Int buRow = 0; buRow < numSubBlockPartitions; buRow++)
     {
-      for (Int buCol = 0; buCol < numSubBlockPartitions; buCol++)
+      for (Int buCol = 0; buCol < numSubBlockPartitions; buCol++) // loop vectorized + peeled.
       {
         m_subCuOffsetInBuffer[chan][(buRow << uiMaxCUDepth) + buCol] = stride  * buRow * minSubBlockHeight + buCol * minSubBlockWidth;
       }
@@ -215,7 +215,7 @@ Void TComPicYuv::extendPicBorder ()
     // do left and right margins
     for (Int y = 0; y < iHeight; y++)
     {
-      for (Int x = 0; x < iMarginX; x++ )
+      for (Int x = 0; x < iMarginX; x++ ) // loop vectorized + peeled.
       {
         pi[ -iMarginX + x ] = pi[0];
         pi[    iWidth + x ] = pi[iWidth-1];
