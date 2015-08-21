@@ -180,7 +180,7 @@ Void TComSampleAdaptiveOffset::invertQuantOffsets(ComponentID compIdx, Int typeI
   }
   else //EO
   {
-    for(Int i=0; i< NUM_SAO_EO_CLASSES; i++)
+    for(Int i=0; i< NUM_SAO_EO_CLASSES; i++) // loop vectorized.
     {
       dstOffsets[i] = codedOffset[i] *(1<<m_offsetStepLog2[compIdx]);
     }
@@ -386,7 +386,7 @@ Void TComSampleAdaptiveOffset::offsetBlock(const Int channelBitDepth, Int typeId
       }
 
       Pel* srcLineAbove= srcLine- srcStride;
-      for (x=0; x< width; x++)
+      for (x=0; x< width; x++) // loop vectorized + peeled.
       {
         //signUpLine[x] = (Char)sgn(srcLine[x] - srcLineAbove[x]);
         signUpLine[x] = (SChar)sgn(srcLine[x] - srcLineAbove[x]);
@@ -426,7 +426,7 @@ Void TComSampleAdaptiveOffset::offsetBlock(const Int channelBitDepth, Int typeId
 
       //prepare 2nd line's upper sign
       Pel* srcLineBelow= srcLine+ srcStride;
-      for (x=startX; x< endX+1; x++)
+      for (x=startX; x< endX+1; x++) // loop vectorized + peeled.
       {
         //signUpLine[x] = (Char)sgn(srcLineBelow[x] - srcLine[x- 1]);
         signUpLine[x] = (SChar)sgn(srcLineBelow[x] - srcLine[x- 1]);
@@ -494,7 +494,7 @@ Void TComSampleAdaptiveOffset::offsetBlock(const Int channelBitDepth, Int typeId
 
       //prepare 2nd line upper sign
       Pel* srcLineBelow= srcLine+ srcStride;
-      for (x=startX-1; x< endX; x++)
+      for (x=startX-1; x< endX; x++) // loop vectorized + peeled.
       {
         //signUpLine[x] = (Char)sgn(srcLineBelow[x] - srcLine[x+1]);
         signUpLine[x] = (SChar)sgn(srcLineBelow[x] - srcLine[x+1]);
@@ -751,7 +751,7 @@ Void TComSampleAdaptiveOffset::xPCMSampleRestoration (TComDataCU* pcCU, UInt uiA
 
   for(UInt uiY = 0; uiY < uiHeight; uiY++ )
   {
-    for(UInt uiX = 0; uiX < uiWidth; uiX++ )
+    for(UInt uiX = 0; uiX < uiWidth; uiX++ ) // loop vectorized + peeled.
     {
       piSrc[uiX] = (piPcm[uiX] << uiPcmLeftShiftBit);
     }
