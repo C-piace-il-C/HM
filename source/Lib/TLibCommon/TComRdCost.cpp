@@ -1229,7 +1229,7 @@ Distortion TComRdCost::xGetSSE64( DistParam* pcDtParam )
 
   Intermediate_Int  iTemp;
 
-  for( ; iRows != 0; iRows-- )
+  for( ; iRows != 0; iRows-- ) // loop vectorized + peeled.
   {
     iTemp = piOrg[ 0] - piCur[ 0]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
     iTemp = piOrg[ 1] - piCur[ 1]; uiSum += Distortion(( iTemp * iTemp ) >> uiShift);
