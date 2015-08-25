@@ -1070,19 +1070,39 @@ Distortion TComRdCost::xGetSAD64( DistParam* pcDtParam )
     piCur += iStrideCur;
   }
 
-  Distortion uiSum = 0;
-  for (int i = 0; i < 4; i++)
-  {
-    uiSum +=
-      vgetq_lane_u32(v_uiSum1,  i) + vgetq_lane_u32(v_uiSum2,  i) +
-      vgetq_lane_u32(v_uiSum3,  i) + vgetq_lane_u32(v_uiSum4,  i) +
-      vgetq_lane_u32(v_uiSum5,  i) + vgetq_lane_u32(v_uiSum6,  i) +
-      vgetq_lane_u32(v_uiSum7,  i) + vgetq_lane_u32(v_uiSum8,  i) +
-      vgetq_lane_u32(v_uiSum9,  i) + vgetq_lane_u32(v_uiSum10, i) +
-      vgetq_lane_u32(v_uiSum11, i) + vgetq_lane_u32(v_uiSum12, i) +
-      vgetq_lane_u32(v_uiSum13, i) + vgetq_lane_u32(v_uiSum14, i) +
-      vgetq_lane_u32(v_uiSum15, i) + vgetq_lane_u32(v_uiSum16, i);
-  }
+  Distortion uiSum =
+    vgetq_lane_u32(v_uiSum1,  0) + vgetq_lane_u32(v_uiSum2,  0) +
+    vgetq_lane_u32(v_uiSum3,  0) + vgetq_lane_u32(v_uiSum4,  0) +
+    vgetq_lane_u32(v_uiSum5,  0) + vgetq_lane_u32(v_uiSum6,  0) +
+    vgetq_lane_u32(v_uiSum7,  0) + vgetq_lane_u32(v_uiSum8,  0) +
+    vgetq_lane_u32(v_uiSum9,  0) + vgetq_lane_u32(v_uiSum10, 0) +
+    vgetq_lane_u32(v_uiSum11, 0) + vgetq_lane_u32(v_uiSum12, 0) +
+    vgetq_lane_u32(v_uiSum13, 0) + vgetq_lane_u32(v_uiSum14, 0) +
+    vgetq_lane_u32(v_uiSum15, 0) + vgetq_lane_u32(v_uiSum16, 0) +
+    vgetq_lane_u32(v_uiSum1,  1) + vgetq_lane_u32(v_uiSum2,  1) +
+    vgetq_lane_u32(v_uiSum3,  1) + vgetq_lane_u32(v_uiSum4,  1) +
+    vgetq_lane_u32(v_uiSum5,  1) + vgetq_lane_u32(v_uiSum6,  1) +
+    vgetq_lane_u32(v_uiSum7,  1) + vgetq_lane_u32(v_uiSum8,  1) +
+    vgetq_lane_u32(v_uiSum9,  1) + vgetq_lane_u32(v_uiSum10, 1) +
+    vgetq_lane_u32(v_uiSum11, 1) + vgetq_lane_u32(v_uiSum12, 1) +
+    vgetq_lane_u32(v_uiSum13, 1) + vgetq_lane_u32(v_uiSum14, 1) +
+    vgetq_lane_u32(v_uiSum15, 1) + vgetq_lane_u32(v_uiSum16, 1) +
+    vgetq_lane_u32(v_uiSum1,  2) + vgetq_lane_u32(v_uiSum2,  2) +
+    vgetq_lane_u32(v_uiSum3,  2) + vgetq_lane_u32(v_uiSum4,  2) +
+    vgetq_lane_u32(v_uiSum5,  2) + vgetq_lane_u32(v_uiSum6,  2) +
+    vgetq_lane_u32(v_uiSum7,  2) + vgetq_lane_u32(v_uiSum8,  2) +
+    vgetq_lane_u32(v_uiSum9,  2) + vgetq_lane_u32(v_uiSum10, 2) +
+    vgetq_lane_u32(v_uiSum11, 2) + vgetq_lane_u32(v_uiSum12, 2) +
+    vgetq_lane_u32(v_uiSum13, 2) + vgetq_lane_u32(v_uiSum14, 2) +
+    vgetq_lane_u32(v_uiSum15, 2) + vgetq_lane_u32(v_uiSum16, 2) +
+    vgetq_lane_u32(v_uiSum1,  3) + vgetq_lane_u32(v_uiSum2,  3) +
+    vgetq_lane_u32(v_uiSum3,  3) + vgetq_lane_u32(v_uiSum4,  3) +
+    vgetq_lane_u32(v_uiSum5,  3) + vgetq_lane_u32(v_uiSum6,  3) +
+    vgetq_lane_u32(v_uiSum7,  3) + vgetq_lane_u32(v_uiSum8,  3) +
+    vgetq_lane_u32(v_uiSum9,  3) + vgetq_lane_u32(v_uiSum10, 3) +
+    vgetq_lane_u32(v_uiSum11, 3) + vgetq_lane_u32(v_uiSum12, 3) +
+    vgetq_lane_u32(v_uiSum13, 3) + vgetq_lane_u32(v_uiSum14, 3) +
+    vgetq_lane_u32(v_uiSum15, 3) + vgetq_lane_u32(v_uiSum16, 3);
 
   uiSum <<= iSubShift;
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
