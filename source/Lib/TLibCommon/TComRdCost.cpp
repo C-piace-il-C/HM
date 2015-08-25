@@ -876,77 +876,153 @@ Distortion TComRdCost::xGetSAD64( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur*iSubStep;
   Int  iStrideOrg = pcDtParam->iStrideOrg*iSubStep;
 
-  Distortion uiSum = 0;
+  uint32x4_t v_uiSum1  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum2  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum3  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum4  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum5  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum6  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum7  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum8  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum9  = vdupq_n_u32(0);
+  uint32x4_t v_uiSum10 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum11 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum12 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum13 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum14 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum15 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum16 = vdupq_n_u32(0);
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
-    uiSum += abs( piOrg[1] - piCur[1] ); 
-    uiSum += abs( piOrg[2] - piCur[2] );
-    uiSum += abs( piOrg[3] - piCur[3] );
-    uiSum += abs( piOrg[4] - piCur[4] );
-    uiSum += abs( piOrg[5] - piCur[5] );
-    uiSum += abs( piOrg[6] - piCur[6] );
-    uiSum += abs( piOrg[7] - piCur[7] );
-    uiSum += abs( piOrg[8] - piCur[8] );
-    uiSum += abs( piOrg[9] - piCur[9] );
-    uiSum += abs( piOrg[10] - piCur[10] );
-    uiSum += abs( piOrg[11] - piCur[11] );
-    uiSum += abs( piOrg[12] - piCur[12] );
-    uiSum += abs( piOrg[13] - piCur[13] );
-    uiSum += abs( piOrg[14] - piCur[14] );
-    uiSum += abs( piOrg[15] - piCur[15] );
-    uiSum += abs( piOrg[16] - piCur[16] );
-    uiSum += abs( piOrg[17] - piCur[17] );
-    uiSum += abs( piOrg[18] - piCur[18] );
-    uiSum += abs( piOrg[19] - piCur[19] );
-    uiSum += abs( piOrg[20] - piCur[20] );
-    uiSum += abs( piOrg[21] - piCur[21] );
-    uiSum += abs( piOrg[22] - piCur[22] );
-    uiSum += abs( piOrg[23] - piCur[23] );
-    uiSum += abs( piOrg[24] - piCur[24] );
-    uiSum += abs( piOrg[25] - piCur[25] );
-    uiSum += abs( piOrg[26] - piCur[26] );
-    uiSum += abs( piOrg[27] - piCur[27] );
-    uiSum += abs( piOrg[28] - piCur[28] );
-    uiSum += abs( piOrg[29] - piCur[29] );
-    uiSum += abs( piOrg[30] - piCur[30] );
-    uiSum += abs( piOrg[31] - piCur[31] );
-    uiSum += abs( piOrg[32] - piCur[32] );
-    uiSum += abs( piOrg[33] - piCur[33] );
-    uiSum += abs( piOrg[34] - piCur[34] );
-    uiSum += abs( piOrg[35] - piCur[35] );
-    uiSum += abs( piOrg[36] - piCur[36] );
-    uiSum += abs( piOrg[37] - piCur[37] );
-    uiSum += abs( piOrg[38] - piCur[38] );
-    uiSum += abs( piOrg[39] - piCur[39] );
-    uiSum += abs( piOrg[40] - piCur[40] );
-    uiSum += abs( piOrg[41] - piCur[41] );
-    uiSum += abs( piOrg[42] - piCur[42] );
-    uiSum += abs( piOrg[43] - piCur[43] );
-    uiSum += abs( piOrg[44] - piCur[44] );
-    uiSum += abs( piOrg[45] - piCur[45] );
-    uiSum += abs( piOrg[46] - piCur[46] );
-    uiSum += abs( piOrg[47] - piCur[47] );
-    uiSum += abs( piOrg[48] - piCur[48] );
-    uiSum += abs( piOrg[49] - piCur[49] );
-    uiSum += abs( piOrg[50] - piCur[50] );
-    uiSum += abs( piOrg[51] - piCur[51] );
-    uiSum += abs( piOrg[52] - piCur[52] );
-    uiSum += abs( piOrg[53] - piCur[53] );
-    uiSum += abs( piOrg[54] - piCur[54] );
-    uiSum += abs( piOrg[55] - piCur[55] );
-    uiSum += abs( piOrg[56] - piCur[56] );
-    uiSum += abs( piOrg[57] - piCur[57] );
-    uiSum += abs( piOrg[58] - piCur[58] );
-    uiSum += abs( piOrg[59] - piCur[59] );
-    uiSum += abs( piOrg[60] - piCur[60] );
-    uiSum += abs( piOrg[61] - piCur[61] );
-    uiSum += abs( piOrg[62] - piCur[62] );
-    uiSum += abs( piOrg[63] - piCur[63] );
+    // v_uiSum1  += |piOrg - piCur|  -  [0; 3]
+    v_uiSum1 = vabal_u16(
+      v_uiSum1,
+      vld1_u16((uint16_t *)&piOrg[0]),
+      vld1_u16((uint16_t *)&piCur[0])
+      );
+
+    // v_uiSum2  += |piOrg - piCur|  -  [4; 7]
+    v_uiSum2 = vabal_u16(
+      v_uiSum2,
+      vld1_u16((uint16_t *)&piOrg[4]),
+      vld1_u16((uint16_t *)&piCur[4])
+      );
+
+    // v_uiSum3  += |piOrg - piCur|  -  [8; 11]
+    v_uiSum3 = vabal_u16(
+      v_uiSum3,
+      vld1_u16((uint16_t *)&piOrg[8]),
+      vld1_u16((uint16_t *)&piCur[8])
+      );
+
+    // v_uiSum4  += |piOrg - piCur|  -  [12; 15]
+    v_uiSum4 = vabal_u16(
+      v_uiSum4,
+      vld1_u16((uint16_t *)&piOrg[12]),
+      vld1_u16((uint16_t *)&piCur[12])
+      );
+
+    // v_uiSum5  += |piOrg - piCur|  -  [16; 19]
+    v_uiSum5 = vabal_u16(
+      v_uiSum5,
+      vld1_u16((uint16_t *)&piOrg[16]),
+      vld1_u16((uint16_t *)&piCur[16])
+      );
+
+    // v_uiSum6  += |piOrg - piCur|  -  [20; 23]
+    v_uiSum6 = vabal_u16(
+      v_uiSum6,
+      vld1_u16((uint16_t *)&piOrg[20]),
+      vld1_u16((uint16_t *)&piCur[20])
+      );
+
+    // v_uiSum7  += |piOrg - piCur|  -  [24; 27]
+    v_uiSum7 = vabal_u16(
+      v_uiSum7,
+      vld1_u16((uint16_t *)&piOrg[24]),
+      vld1_u16((uint16_t *)&piCur[24])
+      );
+
+    // v_uiSum8  += |piOrg - piCur|  -  [28; 31]
+    v_uiSum8 = vabal_u16(
+      v_uiSum8,
+      vld1_u16((uint16_t *)&piOrg[28]),
+      vld1_u16((uint16_t *)&piCur[28])
+      );
+
+    // v_uiSum9  += |piOrg - piCur|  -  [32; 35]
+    v_uiSum9 = vabal_u16(
+      v_uiSum9,
+      vld1_u16((uint16_t *)&piOrg[32]),
+      vld1_u16((uint16_t *)&piCur[32])
+      );
+
+    // v_uiSum10  += |piOrg - piCur|  -  [36; 39]
+    v_uiSum10 = vabal_u16(
+      v_uiSum10,
+      vld1_u16((uint16_t *)&piOrg[36]),
+      vld1_u16((uint16_t *)&piCur[36])
+      );
+
+    // v_uiSum11  += |piOrg - piCur|  -  [40; 43]
+    v_uiSum11 = vabal_u16(
+      v_uiSum11,
+      vld1_u16((uint16_t *)&piOrg[40]),
+      vld1_u16((uint16_t *)&piCur[40])
+      );
+
+    // v_uiSum12  += |piOrg - piCur|  -  [44; 47]
+    v_uiSum12 = vabal_u16(
+      v_uiSum12,
+      vld1_u16((uint16_t *)&piOrg[44]),
+      vld1_u16((uint16_t *)&piCur[44])
+      );
+
+    // v_uiSum13  += |piOrg - piCur|  -  [48; 51]
+    v_uiSum13 = vabal_u16(
+      v_uiSum13,
+      vld1_u16((uint16_t *)&piOrg[48]),
+      vld1_u16((uint16_t *)&piCur[48])
+      );
+
+    // v_uiSum14  += |piOrg - piCur|  -  [52; 55]
+    v_uiSum14 = vabal_u16(
+      v_uiSum14,
+      vld1_u16((uint16_t *)&piOrg[52]),
+      vld1_u16((uint16_t *)&piCur[52])
+      );
+
+    // v_uiSum15  += |piOrg - piCur|  -  [56; 59]
+    v_uiSum15 = vabal_u16(
+      v_uiSum15,
+      vld1_u16((uint16_t *)&piOrg[56]),
+      vld1_u16((uint16_t *)&piCur[56])
+      );
+
+    // v_uiSum16  += |piOrg - piCur|  -  [60; 63]
+    v_uiSum16 = vabal_u16(
+      v_uiSum16,
+      vld1_u16((uint16_t *)&piOrg[60]),
+      vld1_u16((uint16_t *)&piCur[60])
+      );
 
     piOrg += iStrideOrg;
     piCur += iStrideCur;
+  }
+
+  Distortion uiSum = 0;
+  for (int i = 0; i < 4; i++)
+  {
+    uiSum +=
+      vgetq_lane_u32(v_uiSum1,  i) + vgetq_lane_u32(v_uiSum2,  i) +
+      vgetq_lane_u32(v_uiSum3,  i) + vgetq_lane_u32(v_uiSum4,  i) +
+      vgetq_lane_u32(v_uiSum5,  i) + vgetq_lane_u32(v_uiSum6,  i) +
+      vgetq_lane_u32(v_uiSum7,  i) + vgetq_lane_u32(v_uiSum8,  i) +
+      vgetq_lane_u32(v_uiSum9,  i) + vgetq_lane_u32(v_uiSum10, i) +
+      vgetq_lane_u32(v_uiSum11, i) + vgetq_lane_u32(v_uiSum12, i) +
+      vgetq_lane_u32(v_uiSum13, i) + vgetq_lane_u32(v_uiSum14, i) +
+      vgetq_lane_u32(v_uiSum15, i) + vgetq_lane_u32(v_uiSum16, i);
   }
 
   uiSum <<= iSubShift;
