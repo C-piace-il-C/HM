@@ -2177,7 +2177,7 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
   memset(piArlDstCoeff, 0, sizeof(TCoeff) *  uiMaxNumCoeff);
 #endif
 
-  Double pdCostCoeff [ MAX_TU_SIZE * MAX_TU_SIZE ];
+  Double pdCostCoeff [ MAX_TU_SIZE * MAX_TU_SIZE ]; // %%OPT provare a rendere statiche tutte le inizializzazioni, in modo da non doverle fare ogni volta (controlla se è il caso di farlo anche per le const)
   Double pdCostSig   [ MAX_TU_SIZE * MAX_TU_SIZE ];
   Double pdCostCoeff0[ MAX_TU_SIZE * MAX_TU_SIZE ];
   memset( pdCostCoeff, 0, sizeof(Double) *  uiMaxNumCoeff );
@@ -2234,9 +2234,9 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
 
   const UInt significanceMapContextOffset = getSignificanceMapContextOffset(compID);
 
-  for (Int iCGScanPos = uiCGNum-1; iCGScanPos >= 0; iCGScanPos--)
+  for (Int iCGScanPos = uiCGNum-1; iCGScanPos >= 0; iCGScanPos--) 
   {
-    UInt uiCGBlkPos = codingParameters.scanCG[ iCGScanPos ];
+    UInt uiCGBlkPos = codingParameters.scanCG[ iCGScanPos ]; // %%OPT prova a farle static anche queste
     UInt uiCGPosY   = uiCGBlkPos / codingParameters.widthInGroups;
     UInt uiCGPosX   = uiCGBlkPos - (uiCGPosY * codingParameters.widthInGroups);
 
@@ -2522,7 +2522,7 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
   } // end for
 
 
-  for ( Int scanPos = 0; scanPos < iBestLastIdxP1; scanPos++ )
+  for ( Int scanPos = 0; scanPos < iBestLastIdxP1; scanPos++ ) // %%OPT inverti l'ordine: scanPos--
   {
     Int blkPos = codingParameters.scan[ scanPos ];
     TCoeff level = piDstCoeff[ blkPos ];
@@ -2531,7 +2531,7 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
   }
 
   //===== clean uncoded coefficients =====
-  for ( Int scanPos = iBestLastIdxP1; scanPos <= iLastScanPos; scanPos++ )
+  for ( Int scanPos = iBestLastIdxP1; scanPos <= iLastScanPos; scanPos++ ) // %%OPT inverti l'ordine: scanPos--
   {
     piDstCoeff[ codingParameters.scan[ scanPos ] ] = 0;
   }
@@ -2563,7 +2563,7 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
         }
       }
 
-      for(n = 0; n <uiCGSize; n++ )
+      for(n = 0; n <uiCGSize; n++ ) // %%OPT inverti l'ordine: n--
       {
         if( piDstCoeff[ codingParameters.scan[ n + subPos ]] )
         {
@@ -2572,7 +2572,7 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
         }
       }
 
-      for(n = firstNZPosInCG; n <=lastNZPosInCG; n++ )
+      for(n = firstNZPosInCG; n <=lastNZPosInCG; n++ ) // %%OPT inverti l'ordine: n--
       {
         absSum += Int(piDstCoeff[ codingParameters.scan[ n + subPos ]]);
       }
@@ -2602,7 +2602,7 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
 
               if(lastCG==1 && lastNZPosInCG==n && abs(piDstCoeff[uiBlkPos])==1)
               {
-                costDown -= (4<<15);
+                costDown -= (4<<15); // %%opt sostituisci con la costante
               }
 
               if(costUp<costDown)
@@ -2630,10 +2630,10 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
 
               if(n<firstNZPosInCG)
               {
-                UInt thissignbit = (plSrcCoeff[uiBlkPos]>=0?0:1);
+                UInt thissignbit = (plSrcCoeff[uiBlkPos]>=0?0:1); // %%OPT pls remove that if
                 if(thissignbit != signbit )
                 {
-                  curCost = std::numeric_limits<Int64>::max();
+                  curCost = std::numeric_limits<Int64>::max(); // %%OPT sostitusici con una costante (controllane il valore dal banana)
                 }
               }
             }
@@ -2653,11 +2653,11 @@ Void TComTrQuant::xRateDistOptQuant                 (       TComTU       &rTu,
 
           if(plSrcCoeff[minPos]>=0)
           {
-            piDstCoeff[minPos] += finalChange ;
+            piDstCoeff[minPos] += finalChange;
           }
           else
           {
-            piDstCoeff[minPos] -= finalChange ;
+            piDstCoeff[minPos] -= finalChange;
           }
         }
       }

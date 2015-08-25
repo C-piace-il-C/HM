@@ -504,7 +504,7 @@ Distortion TComRdCost::xGetSAD4( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
+    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
     uiSum += abs( piOrg[1] - piCur[1] );
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
@@ -535,7 +535,7 @@ Distortion TComRdCost::xGetSAD8( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
+    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
     uiSum += abs( piOrg[1] - piCur[1] );
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
@@ -559,7 +559,7 @@ Distortion TComRdCost::xGetSAD16( DistParam* pcDtParam )
     return TComRdCostWeightPrediction::xGetSADw( pcDtParam );
   }
   const Pel* piOrg   = pcDtParam->pOrg;
-  const Pel* piCur   = pcDtParam->pCur;
+  const Pel* piCur   = pcDtParam->pCur; // Pel is Short
   Int  iRows   = pcDtParam->iRows;
   Int  iSubShift  = pcDtParam->iSubShift;
   Int  iSubStep   = ( 1 << iSubShift );
@@ -570,7 +570,7 @@ Distortion TComRdCost::xGetSAD16( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
+    uiSum += abs( piOrg[0] - piCur[0] );  // %%OPT vettorizza 
     uiSum += abs( piOrg[1] - piCur[1] );
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
@@ -694,7 +694,7 @@ Distortion TComRdCost::xGetSAD32( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
+    uiSum += abs( piOrg[0] - piCur[0] );  // %%OPT vettorizza 
     uiSum += abs( piOrg[1] - piCur[1] );
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
@@ -753,7 +753,7 @@ Distortion TComRdCost::xGetSAD24( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
+    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
     uiSum += abs( piOrg[1] - piCur[1] );
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
@@ -804,8 +804,8 @@ Distortion TComRdCost::xGetSAD64( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
-    uiSum += abs( piOrg[1] - piCur[1] );
+    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
+    uiSum += abs( piOrg[1] - piCur[1] ); 
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
     uiSum += abs( piOrg[4] - piCur[4] );
@@ -895,7 +895,7 @@ Distortion TComRdCost::xGetSAD48( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] );
+    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
     uiSum += abs( piOrg[1] - piCur[1] );
     uiSum += abs( piOrg[2] - piCur[2] );
     uiSum += abs( piOrg[3] - piCur[3] );
@@ -1541,11 +1541,11 @@ Distortion TComRdCost::xGetHADs( DistParam* pcDtParam )
 
   Distortion uiSum = 0;
 
-  if( ( iRows % 8 == 0) && (iCols % 8 == 0) )
+  if( ( iRows % 8 == 0) && (iCols % 8 == 0) ) // %%OPT rimuovi la %
   {
     Int  iOffsetOrg = iStrideOrg<<3;
     Int  iOffsetCur = iStrideCur<<3;
-    for ( y=0; y<iRows; y+= 8 )
+    for ( y=0; y<iRows; y+= 8 ) // %%OPT rimuovi la y
     {
       for ( x=0; x<iCols; x+= 8 )
       {
@@ -1555,12 +1555,12 @@ Distortion TComRdCost::xGetHADs( DistParam* pcDtParam )
       piCur += iOffsetCur;
     }
   }
-  else if( ( iRows % 4 == 0) && (iCols % 4 == 0) )
+  else if( ( iRows % 4 == 0) && (iCols % 4 == 0) ) // %%OPT rimuovi la %
   {
     Int  iOffsetOrg = iStrideOrg<<2;
     Int  iOffsetCur = iStrideCur<<2;
 
-    for ( y=0; y<iRows; y+= 4 )
+    for ( y=0; y<iRows; y+= 4 ) // %%OPT rimuovi la y
     {
       for ( x=0; x<iCols; x+= 4 )
       {
@@ -1570,7 +1570,7 @@ Distortion TComRdCost::xGetHADs( DistParam* pcDtParam )
       piCur += iOffsetCur;
     }
   }
-  else if( ( iRows % 2 == 0) && (iCols % 2 == 0) )
+  else if( ( iRows % 2 == 0) && (iCols % 2 == 0) ) // %%OPT rimuovi la %
   {
     Int  iOffsetOrg = iStrideOrg<<1;
     Int  iOffsetCur = iStrideCur<<1;
