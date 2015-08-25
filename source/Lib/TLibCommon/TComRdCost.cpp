@@ -565,12 +565,11 @@ Distortion TComRdCost::xGetSAD8( DistParam* pcDtParam )
     piCur += iStrideCur;
   }
 
-  Distortion uiSum = 0;
-  for (int i = 0; i < 4; i++)
-  {
-    uiSum +=
-      vgetq_lane_u32(v_uiSum1, i) + vgetq_lane_u32(v_uiSum2, i);
-  }
+  Distortion uiSum =
+    vgetq_lane_u32(v_uiSum1, 0) + vgetq_lane_u32(v_uiSum2, 0) +
+    vgetq_lane_u32(v_uiSum1, 1) + vgetq_lane_u32(v_uiSum2, 1) +
+    vgetq_lane_u32(v_uiSum1, 2) + vgetq_lane_u32(v_uiSum2, 2) +
+    vgetq_lane_u32(v_uiSum1, 3) + vgetq_lane_u32(v_uiSum2, 3);
 
   uiSum <<= iSubShift;
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
