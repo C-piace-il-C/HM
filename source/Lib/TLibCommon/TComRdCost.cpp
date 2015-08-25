@@ -509,8 +509,8 @@ Distortion TComRdCost::xGetSAD4( DistParam* pcDtParam )
     // v_uiSum += |piOrg - piCur|
     v_uiSum = vabal_u16(
         v_uiSum,                      
-        vld1_u16((uint16_t *)piOrg),  // 4 values from piOrg
-        vld1_u16((uint16_t *)piCur)   // 4 values from piCur
+        vld1_u16((uint16_t *)&piOrg[0]),  // 4 values from piOrg
+        vld1_u16((uint16_t *)&piCur[0])   // 4 values from piCur
       );
 
     piOrg += iStrideOrg;
@@ -542,22 +542,36 @@ Distortion TComRdCost::xGetSAD8( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur*iSubStep;
   Int  iStrideOrg = pcDtParam->iStrideOrg*iSubStep;
 
-  Distortion uiSum = 0;
+  uint32x4_t v_uiSum1 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum2 = vdupq_n_u32(0);
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
-    uiSum += abs( piOrg[1] - piCur[1] );
-    uiSum += abs( piOrg[2] - piCur[2] );
-    uiSum += abs( piOrg[3] - piCur[3] );
-    uiSum += abs( piOrg[4] - piCur[4] );
-    uiSum += abs( piOrg[5] - piCur[5] );
-    uiSum += abs( piOrg[6] - piCur[6] );
-    uiSum += abs( piOrg[7] - piCur[7] );
+    // v_uiSum1 += |piOrg - piCur|  -  [0; 3]
+    v_uiSum1 = vabal_u16(
+      v_uiSum1,
+      vld1_u16((uint16_t *)&piOrg[0]),
+      vld1_u16((uint16_t *)&piCur[0])
+      );
+
+    // v_uiSum2 += |piOrg - piCur|  -  [4; 7]
+    v_uiSum2 = vabal_u16(
+      v_uiSum2,
+      vld1_u16((uint16_t *)&piOrg[4]),
+      vld1_u16((uint16_t *)&piCur[4])
+      );
 
     piOrg += iStrideOrg;
     piCur += iStrideCur;
   }
+
+  // uiSum = v_uiSum1[0] + v_uiSum1[1] + v_uiSum1[2] + v_uiSum1[3] +
+  //         v_uiSum2[0] + v_uiSum2[1] + v_uiSum2[2] + v_uiSum2[3]
+  Distortion uiSum =
+    vgetq_lane_u32(v_uiSum1, 0) + vgetq_lane_u32(v_uiSum2, 0) +
+    vgetq_lane_u32(v_uiSum1, 1) + vgetq_lane_u32(v_uiSum2, 1) +
+    vgetq_lane_u32(v_uiSum1, 2) + vgetq_lane_u32(v_uiSum2, 2) +
+    vgetq_lane_u32(v_uiSum1, 3) + vgetq_lane_u32(v_uiSum2, 3);
 
   uiSum <<= iSubShift;
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
