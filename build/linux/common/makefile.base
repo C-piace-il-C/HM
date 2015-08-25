@@ -67,7 +67,7 @@ endif
 DEBUG_CPPFLAGS    = -g  -D_DEBUG
 #
 # release cpp
-RELEASE_CPPFLAGS  = -Ofast -Wuninitialized -mcpu=cortex-a7 -mfpu=neon -ftree-vectorize -fopt-info-vec-optimized 2>> /home/cpc/ssd/log_optimized.txt
+RELEASE_CPPFLAGS  = -Ofast -Wuninitialized -mcpu=cortex-a7 -mfpu=neon -mfloat-abi=softfp -ftree-vectorize -fopt-info-vec-optimized 2>> /home/cpc/ssd/log_optimized.txt
 
 
 #########################################################
