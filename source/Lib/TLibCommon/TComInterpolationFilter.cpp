@@ -193,6 +193,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
           c[2] = coeff[2];
           c[3] = coeff[3];
       default:
+          break;
   }
 
   Int cStride = ( isVertical ) ? srcStride : 1;
@@ -243,6 +244,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
             sum += src[col + 2 * cStride] * c[2];
             sum += src[col + 3 * cStride] * c[3];
         default:
+            break;
       }
 
       Pel val = ( sum + offset ) >> shift;
