@@ -569,14 +569,7 @@ Distortion TComRdCost::xGetSAD8( DistParam* pcDtParam )
   for (int i = 0; i < 4; i++)
   {
     uiSum +=
-      vgetq_lane_u32(v_uiSum1, i) + vgetq_lane_u32(v_uiSum2, i) +
-      vgetq_lane_u32(v_uiSum3, i) + vgetq_lane_u32(v_uiSum4, i) +
-      vgetq_lane_u32(v_uiSum5, i) + vgetq_lane_u32(v_uiSum6, i) +
-      vgetq_lane_u32(v_uiSum7, i) + vgetq_lane_u32(v_uiSum8, i) +
-      vgetq_lane_u32(v_uiSum9, i) + vgetq_lane_u32(v_uiSum10, i) +
-      vgetq_lane_u32(v_uiSum11, i) + vgetq_lane_u32(v_uiSum12, i) +
-      vgetq_lane_u32(v_uiSum13, i) + vgetq_lane_u32(v_uiSum14, i) +
-      vgetq_lane_u32(v_uiSum15, i) + vgetq_lane_u32(v_uiSum16, i);
+      vgetq_lane_u32(v_uiSum1, i) + vgetq_lane_u32(v_uiSum2, i);
   }
 
   uiSum <<= iSubShift;
