@@ -179,23 +179,6 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
   c[0] = coeff[0];
   c[1] = coeff[1];
 
-#ifdef CPC_OPTIMIZED
-  switch (N)
-  {
-  case(8) :
-	  c[6] = coeff[6];
-      c[7] = coeff[7];
-  case(7) :
-  case(6) :
-      c[4] = coeff[4];
-	  c[5] = coeff[5];
-  case(5) :
-  case(4) :
-      c[2] = coeff[2];
-	  c[3] = coeff[3];
-  default:
-  }
-#else
   if ( N >= 4 )
   {
     c[2] = coeff[2];
@@ -211,7 +194,6 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
     c[6] = coeff[6];
     c[7] = coeff[7];
   }
-#endif
 
   Int cStride = ( isVertical ) ? srcStride : 1;
   src -= ( N/2 - 1 ) * cStride;
@@ -247,23 +229,6 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
       sum  = src[ col + 0 * cStride] * c[0];
       sum += src[ col + 1 * cStride] * c[1];
 
-#ifdef CPC_OPTIMIZED
-	  switch (N)
-	  {
-	  case(8):
-		  sum += src[col + 6 * cStride] * c[6];
-		  sum += src[col + 7 * cStride] * c[7];
-	  case(7):
-	  case(6):
-		  sum += src[col + 4 * cStride] * c[4];
-		  sum += src[col + 5 * cStride] * c[5];
-	  case(5):
-	  case(4):
-		  sum += src[col + 2 * cStride] * c[2];
-		  sum += src[col + 3 * cStride] * c[3];
-	  default:
-	  }
-#else
       if ( N >= 4 )  // %%OPT questi if si possono sostituire con uno switch fisso
       {
         sum += src[ col + 2 * cStride] * c[2];
@@ -279,7 +244,6 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
         sum += src[ col + 6 * cStride] * c[6];
         sum += src[ col + 7 * cStride] * c[7];
       }
-#endif
 
       Pel val = ( sum + offset ) >> shift;
       if ( isLast )
