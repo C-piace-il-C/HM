@@ -181,19 +181,19 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 
   switch (N)
   {
-      case(8) :
-          c[6] = coeff[6];
-          c[7] = coeff[7];
-      case(7) :
-      case(6) :
-          c[4] = coeff[4];
-          c[5] = coeff[5];
-      case(5) :
-      case(4) :
-          c[2] = coeff[2];
-          c[3] = coeff[3];
-      default:
-          break;
+    case(8) :
+      c[6] = coeff[6];
+      c[7] = coeff[7];
+    case(7) :
+    case(6) :
+      c[4] = coeff[4];
+      c[5] = coeff[5];
+    case(5) :
+    case(4) :
+      c[2] = coeff[2];
+      c[3] = coeff[3];
+    default:
+      break;
   }
 
   Int cStride = ( isVertical ) ? srcStride : 1;
@@ -207,18 +207,18 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
   // negative for bit depths greater than 14, shift will remain non-negative for bit depths of 8->20
   assert(shift >= 0); //  %%OPT sostituisci shift con IF_FILTER_PREC
 
-  if ( isLast )
+  if (isLast)
   {
-    shift += (isFirst) ? 0 : headRoom;
-    offset = 1 << (shift - 1);
-    offset += (isFirst) ? 0 : IF_INTERNAL_OFFS << IF_FILTER_PREC;
-    maxVal = (1 << bitDepth) - 1;
+    shift   += (isFirst) ? 0 : headRoom;
+    offset   = 1 << (shift - 1);
+    offset  += (isFirst) ? 0 : (IF_INTERNAL_OFFS << IF_FILTER_PREC);
+    maxVal   = (1 << bitDepth) - 1;
   }
   else
   {
-    shift -= (isFirst) ? headRoom : 0;  // %%OPT questi due if si possono fare una sola volta
-    offset = (isFirst) ? -IF_INTERNAL_OFFS << shift : 0;
-    maxVal = 0;
+    shift   -= (isFirst) ? headRoom : 0;  // %%OPT questi due if si possono fare una sola volta
+    offset   = (isFirst) ? -IF_INTERNAL_OFFS << shift : 0;
+    maxVal   = 0;
   }
 
   for (row = 0; row < height; row++) // %%OPT questo for può essere migliorato (row non si utilizza)
@@ -233,18 +233,18 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
       switch (N)
       {
         case(8) :
-            sum += src[col + 6 * cStride] * c[6];
-            sum += src[col + 7 * cStride] * c[7];
+          sum += src[col + 6 * cStride] * c[6];
+          sum += src[col + 7 * cStride] * c[7];
         case(7) :
         case(6) :
-            sum += src[col + 4 * cStride] * c[4];
-            sum += src[col + 5 * cStride] * c[5];
+          sum += src[col + 4 * cStride] * c[4];
+          sum += src[col + 5 * cStride] * c[5];
         case(5) :
         case(4) :
-            sum += src[col + 2 * cStride] * c[2];
-            sum += src[col + 3 * cStride] * c[3];
+          sum += src[col + 2 * cStride] * c[2];
+          sum += src[col + 3 * cStride] * c[3];
         default:
-            break;
+          break;
       }
 
       Pel val = ( sum + offset ) >> shift;
