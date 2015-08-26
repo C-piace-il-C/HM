@@ -864,55 +864,31 @@ Distortion TComRdCost::xGetSAD24( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur*iSubStep;
   Int  iStrideOrg = pcDtParam->iStrideOrg*iSubStep;
 
-  uint32x4_t v_uiSum1 = vdupq_n_u32(0);
-  uint32x4_t v_uiSum2 = vdupq_n_u32(0);
-  uint32x4_t v_uiSum3 = vdupq_n_u32(0);
-  uint32x4_t v_uiSum4 = vdupq_n_u32(0);
-  uint32x4_t v_uiSum5 = vdupq_n_u32(0);
-  uint32x4_t v_uiSum6 = vdupq_n_u32(0);
+  uint16x8_t v_uiSum0 = vdupq_n_u16(0);
+  uint16x8_t v_uiSum1 = vdupq_n_u16(0);
+  uint16x8_t v_uiSum2 = vdupq_n_u16(0);
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    // v_uiSum1  += |piOrg - piCur|  -  [0; 3]
-    v_uiSum1 = vabal_u16(
+    // v_uiSum0 += |piOrg - piCur|  -  [0; 7]
+    v_uiSum0 = vabaq_u16(
+      v_uiSum0,
+      vld1q_u16((uint16_t *)&piOrg[0]),
+      vld1q_u16((uint16_t *)&piCur[0])
+      );
+
+    // v_uiSum1 += |piOrg - piCur|  -  [8; 15]
+    v_uiSum1 = vabaq_u16(
       v_uiSum1,
-      vld1_u16((uint16_t *)&piOrg[0]),
-      vld1_u16((uint16_t *)&piCur[0])
+      vld1q_u16((uint16_t *)&piOrg[8]),
+      vld1q_u16((uint16_t *)&piCur[8])
       );
 
-    // v_uiSum2  += |piOrg - piCur|  -  [4; 7]
-    v_uiSum2 = vabal_u16(
+    // v_uiSum2 += |piOrg - piCur|  -  [16; 23]
+    v_uiSum2 = vabaq_u16(
       v_uiSum2,
-      vld1_u16((uint16_t *)&piOrg[4]),
-      vld1_u16((uint16_t *)&piCur[4])
-      );
-
-    // v_uiSum3  += |piOrg - piCur|  -  [8; 11]
-    v_uiSum3 = vabal_u16(
-      v_uiSum3,
-      vld1_u16((uint16_t *)&piOrg[8]),
-      vld1_u16((uint16_t *)&piCur[8])
-      );
-
-    // v_uiSum4  += |piOrg - piCur|  -  [12; 15]
-    v_uiSum4 = vabal_u16(
-      v_uiSum4,
-      vld1_u16((uint16_t *)&piOrg[12]),
-      vld1_u16((uint16_t *)&piCur[12])
-      );
-
-    // v_uiSum5  += |piOrg - piCur|  -  [16; 19]
-    v_uiSum5 = vabal_u16(
-      v_uiSum5,
-      vld1_u16((uint16_t *)&piOrg[16]),
-      vld1_u16((uint16_t *)&piCur[16])
-      );
-
-    // v_uiSum6  += |piOrg - piCur|  -  [20; 23]
-    v_uiSum6 = vabal_u16(
-      v_uiSum6,
-      vld1_u16((uint16_t *)&piOrg[20]),
-      vld1_u16((uint16_t *)&piCur[20])
+      vld1q_u16((uint16_t *)&piOrg[16]),
+      vld1q_u16((uint16_t *)&piCur[16])
       );
 
     piOrg += iStrideOrg;
@@ -920,18 +896,18 @@ Distortion TComRdCost::xGetSAD24( DistParam* pcDtParam )
   }
 
   Distortion uiSum =
-    vgetq_lane_u32(v_uiSum1, 0) + vgetq_lane_u32(v_uiSum2, 0) +
-    vgetq_lane_u32(v_uiSum3, 0) + vgetq_lane_u32(v_uiSum4, 0) +
-    vgetq_lane_u32(v_uiSum5, 0) + vgetq_lane_u32(v_uiSum6, 0) +
-    vgetq_lane_u32(v_uiSum1, 1) + vgetq_lane_u32(v_uiSum2, 1) +
-    vgetq_lane_u32(v_uiSum3, 1) + vgetq_lane_u32(v_uiSum4, 1) +
-    vgetq_lane_u32(v_uiSum5, 1) + vgetq_lane_u32(v_uiSum6, 1) +
-    vgetq_lane_u32(v_uiSum1, 2) + vgetq_lane_u32(v_uiSum2, 2) +
-    vgetq_lane_u32(v_uiSum3, 2) + vgetq_lane_u32(v_uiSum4, 2) +
-    vgetq_lane_u32(v_uiSum5, 2) + vgetq_lane_u32(v_uiSum6, 2) +
-    vgetq_lane_u32(v_uiSum1, 3) + vgetq_lane_u32(v_uiSum2, 3) +
-    vgetq_lane_u32(v_uiSum3, 3) + vgetq_lane_u32(v_uiSum4, 3) +
-    vgetq_lane_u32(v_uiSum5, 3) + vgetq_lane_u32(v_uiSum6, 3);
+    vgetq_lane_u16(v_uiSum0, 0) + vgetq_lane_u16(v_uiSum0, 1) +
+    vgetq_lane_u16(v_uiSum0, 2) + vgetq_lane_u16(v_uiSum0, 3) +
+    vgetq_lane_u16(v_uiSum0, 4) + vgetq_lane_u16(v_uiSum0, 5) +
+    vgetq_lane_u16(v_uiSum0, 6) + vgetq_lane_u16(v_uiSum0, 7) +
+    vgetq_lane_u16(v_uiSum1, 0) + vgetq_lane_u16(v_uiSum1, 1) +
+    vgetq_lane_u16(v_uiSum1, 2) + vgetq_lane_u16(v_uiSum1, 3) +
+    vgetq_lane_u16(v_uiSum1, 4) + vgetq_lane_u16(v_uiSum1, 5) +
+    vgetq_lane_u16(v_uiSum1, 6) + vgetq_lane_u16(v_uiSum1, 7) +
+    vgetq_lane_u16(v_uiSum2, 0) + vgetq_lane_u16(v_uiSum2, 1) +
+    vgetq_lane_u16(v_uiSum2, 2) + vgetq_lane_u16(v_uiSum2, 3) +
+    vgetq_lane_u16(v_uiSum2, 4) + vgetq_lane_u16(v_uiSum2, 5) +
+    vgetq_lane_u16(v_uiSum2, 6) + vgetq_lane_u16(v_uiSum2, 7);
 
   uiSum <<= iSubShift;
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
