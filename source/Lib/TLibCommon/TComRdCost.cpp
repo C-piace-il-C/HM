@@ -962,52 +962,60 @@ Distortion TComRdCost::xGetSAD64( DistParam* pcDtParam )
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
+    // v_uiSum0 += |piOrg - piCur|  -  [0; 7]
     v_uiSum0 = vabaq_u16(
-        v_uiSum0,
-        vld1q_u16((uint16_t *)&piOrg[0]),
-        vld1q_u16((uint16_t *)&piCur[0])
+      v_uiSum0,
+      vld1q_u16((uint16_t *)&piOrg[0]),
+      vld1q_u16((uint16_t *)&piCur[0])
       );
 
+    // v_uiSum1 += |piOrg - piCur|  -  [8; 15]
     v_uiSum1 = vabaq_u16(
-        v_uiSum1,
-        vld1q_u16((uint16_t *)&piOrg[8]),
-        vld1q_u16((uint16_t *)&piCur[8])
+      v_uiSum1,
+      vld1q_u16((uint16_t *)&piOrg[8]),
+      vld1q_u16((uint16_t *)&piCur[8])
       );
 
+    // v_uiSum2 += |piOrg - piCur|  -  [16; 23]
     v_uiSum2 = vabaq_u16(
-        v_uiSum2,
-        vld1q_u16((uint16_t *)&piOrg[16]),
-        vld1q_u16((uint16_t *)&piCur[16])
+      v_uiSum2,
+      vld1q_u16((uint16_t *)&piOrg[16]),
+      vld1q_u16((uint16_t *)&piCur[16])
       );
 
+    // v_uiSum3 += |piOrg - piCur|  -  [24; 31]
     v_uiSum3 = vabaq_u16(
-        v_uiSum3,
-        vld1q_u16((uint16_t *)&piOrg[24]),
-        vld1q_u16((uint16_t *)&piCur[24])
+      v_uiSum3,
+      vld1q_u16((uint16_t *)&piOrg[24]),
+      vld1q_u16((uint16_t *)&piCur[24])
       );
 
+    // v_uiSum4 += |piOrg - piCur|  -  [32; 39]
     v_uiSum4 = vabaq_u16(
-        v_uiSum4,
-        vld1q_u16((uint16_t *)&piOrg[32]),
-        vld1q_u16((uint16_t *)&piCur[32])
+      v_uiSum4,
+      vld1q_u16((uint16_t *)&piOrg[32]),
+      vld1q_u16((uint16_t *)&piCur[32])
       );
 
+    // v_uiSum5 += |piOrg - piCur|  -  [40; 47]
     v_uiSum5 = vabaq_u16(
-        v_uiSum5,
-        vld1q_u16((uint16_t *)&piOrg[40]),
-        vld1q_u16((uint16_t *)&piCur[40])
+      v_uiSum5,
+      vld1q_u16((uint16_t *)&piOrg[40]),
+      vld1q_u16((uint16_t *)&piCur[40])
       );
 
+    // v_uiSum6 += |piOrg - piCur|  -  [48; 55]
     v_uiSum6 = vabaq_u16(
-        v_uiSum6,
-        vld1q_u16((uint16_t *)&piOrg[48]),
-        vld1q_u16((uint16_t *)&piCur[48])
+      v_uiSum6,
+      vld1q_u16((uint16_t *)&piOrg[48]),
+      vld1q_u16((uint16_t *)&piCur[48])
       );
 
+    // v_uiSum7 += |piOrg - piCur|  -  [56; 63]
     v_uiSum7 = vabaq_u16(
-        v_uiSum7,
-        vld1q_u16((uint16_t *)&piOrg[56]),
-        vld1q_u16((uint16_t *)&piCur[56])
+      v_uiSum7,
+      vld1q_u16((uint16_t *)&piOrg[56]),
+      vld1q_u16((uint16_t *)&piCur[56])
       );
 
     piOrg += iStrideOrg;
