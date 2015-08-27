@@ -19,7 +19,6 @@ __inline int abs(int x)
   return(x);
 }
 
-__inline 
 __inline int clip2(int x, const int min, const int max)
 {
   asm (
