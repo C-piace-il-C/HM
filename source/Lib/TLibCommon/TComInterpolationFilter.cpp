@@ -131,7 +131,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
     const Int shift = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
 
     Pel maxVal = (1 << bitDepth) - 1;
-    Pel minVal = 0;
+    //Pel minVal = 0;
     for (row = 0; row < height; row++)
     {
       for (col = 0; col < width; col++) // loop vectorized + peeled.
