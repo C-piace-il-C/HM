@@ -63,6 +63,12 @@ class TComInterpolationFilter
   template<Int N, Bool isVertical, Bool isFirst, Bool isLast>
   static Void filter(Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff);
 
+  template<Bool isVertical, Bool isFirst, Bool isLast>
+  static Void filter8(Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff);
+
+  template<Bool isVertical, Bool isFirst, Bool isLast>
+  static Void filter4(Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff);
+
   template<Int N>
   static Void filterHor(Int bitDepth, Pel *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height,               Bool isLast, TFilterCoeff const *coeff);
   template<Int N>

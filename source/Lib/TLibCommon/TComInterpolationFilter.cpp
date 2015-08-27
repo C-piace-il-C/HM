@@ -259,6 +259,155 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 	}
 }
 
+template<Bool isVertical, Bool isFirst, Bool isLast>
+Void TComInterpolationFilter::filter8(Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff)
+{
+  Int row, col;
+
+  Pel c[8];
+  c[0] = coeff[0];
+  c[1] = coeff[1];
+
+  c[2] = coeff[2];
+  c[3] = coeff[3];
+  c[4] = coeff[4];
+  c[5] = coeff[5];
+  c[6] = coeff[6];
+  c[7] = coeff[7];
+
+
+  Int cStride = (isVertical) ? srcStride : 1;
+  src -= ((N >> 1) - 1) * cStride;
+
+  Int offset;
+  Pel maxVal;
+  Int headRoom = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
+  Int shift = IF_FILTER_PREC;
+  // with the current settings (IF_INTERNAL_PREC = 14 and IF_FILTER_PREC = 6), though headroom can be
+  // negative for bit depths greater than 14, shift will remain non-negative for bit depths of 8->20
+  // assert(IF_FILTER_PREC >= 0); rimosso perché #define IF_FILTER_PREC 6 e non abbiamo intenzione di modificarlo
+
+  if (isLast)
+  {
+    offset = 1 << (shift - 1);
+    if (!isFirst)
+    {
+      shift += headRoom;
+      offset = 1 << (shift - 1);
+      offset += IF_INTERNAL_OFFS << IF_FILTER_PREC;
+    }
+    maxVal = (1 << bitDepth) - 1;
+  }
+  else
+  {
+    offset = 0;
+    if (isFirst)
+    {
+      shift -= headRoom;
+      offset = -IF_INTERNAL_OFFS << shift;
+    }
+    maxVal = 0;
+  }
+
+  for (row = height; row > 0; row--)
+  {
+    for (col = 0; col < width; col++) // loop vectorized + peeled.
+    {
+      Int sum;
+
+      sum = src[col + 0 * cStride] * c[0];
+      sum += src[col + 1 * cStride] * c[1];
+
+      sum += src[col + 2 * cStride] * c[2];
+      sum += src[col + 3 * cStride] * c[3];
+      sum += src[col + 4 * cStride] * c[4];
+      sum += src[col + 5 * cStride] * c[5];
+      sum += src[col + 6 * cStride] * c[6];
+      sum += src[col + 7 * cStride] * c[7];
+
+      Pel val = (sum + offset) >> shift;
+      if (isLast)
+      {
+        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
+      }
+      dst[col] = val;
+    }
+
+    src += srcStride;
+    dst += dstStride;
+  }
+}
+
+template<Bool isVertical, Bool isFirst, Bool isLast>
+Void TComInterpolationFilter::filter4(Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff)
+{
+  Int row, col;
+
+  Pel c[8];
+  c[0] = coeff[0];
+  c[1] = coeff[1];
+
+  c[2] = coeff[2];
+  c[3] = coeff[3];
+
+
+  Int cStride = (isVertical) ? srcStride : 1;
+  src -= ((N >> 1) - 1) * cStride;
+
+  Int offset;
+  Pel maxVal;
+  Int headRoom = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
+  Int shift = IF_FILTER_PREC;
+  // with the current settings (IF_INTERNAL_PREC = 14 and IF_FILTER_PREC = 6), though headroom can be
+  // negative for bit depths greater than 14, shift will remain non-negative for bit depths of 8->20
+  // assert(IF_FILTER_PREC >= 0); rimosso perché #define IF_FILTER_PREC 6 e non abbiamo intenzione di modificarlo
+
+  if (isLast)
+  {
+    offset = 1 << (shift - 1);
+    if (!isFirst)
+    {
+      shift += headRoom;
+      offset = 1 << (shift - 1);
+      offset += IF_INTERNAL_OFFS << IF_FILTER_PREC;
+    }
+    maxVal = (1 << bitDepth) - 1;
+  }
+  else
+  {
+    offset = 0;
+    if (isFirst)
+    {
+      shift -= headRoom;
+      offset = -IF_INTERNAL_OFFS << shift;
+    }
+    maxVal = 0;
+  }
+
+  for (row = height; row > 0; row--)
+  {
+    for (col = 0; col < width; col++) // loop vectorized + peeled.
+    {
+      Int sum;
+
+      sum = src[col + 0 * cStride] * c[0];
+      sum += src[col + 1 * cStride] * c[1];
+
+      sum += src[col + 2 * cStride] * c[2];
+      sum += src[col + 3 * cStride] * c[3];
+
+      Pel val = (sum + offset) >> shift;
+      if (isLast)
+      {
+        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
+      }
+      dst[col] = val;
+    }
+
+    src += srcStride;
+    dst += dstStride;
+  }
+}
 
 
 /**
