@@ -43,6 +43,7 @@
 #include "TComRom.h"
 #include "TComInterpolationFilter.h"
 #include <assert.h>
+#include "../optimizations.h"
 
 #include "TComChromaFormat.h"
 
@@ -137,14 +138,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
         Pel val = src[ col ];
         val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
         // %%OPT sostituisci sti if con un clip2
-		if (val < minVal) // %%OPT tra l'altro minval è 0
-        {
-          val = minVal;
-        }
-        if (val > maxVal) 
-        {
-          val = maxVal;
-        }
+        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
         dst[col] = val;
       }
 
