@@ -43,6 +43,7 @@
 #include "TComRom.h"
 #include "TComInterpolationFilter.h"
 #include <assert.h>
+
 #include "../optimizations.h"
 
 #include "TComChromaFormat.h"
@@ -137,7 +138,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
       {
         Pel val = src[ col ];
         val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
-        val = (short)OPTIMIZATIONS::clip2_m0(val, maxVal);
+        val = clip2_m0(val, maxVal);
         dst[col] = val;
       }
 
@@ -249,7 +250,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 			Pel val = (sum + offset) >> shift;
 			if (isLast)
 			{
-        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
+        val = clip2_m0(val, maxVal);
 			}
 			dst[col] = val;
 		}
@@ -277,7 +278,7 @@ Void TComInterpolationFilter::filter8(Int bitDepth, Pel const *src, Int srcStrid
 
 
   Int cStride = (isVertical) ? srcStride : 1;
-  src -= ((N >> 1) - 1) * cStride;
+  src -= 3 * cStride;
 
   Int offset;
   Pel maxVal;
@@ -328,7 +329,7 @@ Void TComInterpolationFilter::filter8(Int bitDepth, Pel const *src, Int srcStrid
       Pel val = (sum + offset) >> shift;
       if (isLast)
       {
-        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
+        val = clip2_m0(val, maxVal);
       }
       dst[col] = val;
     }
@@ -352,7 +353,7 @@ Void TComInterpolationFilter::filter4(Int bitDepth, Pel const *src, Int srcStrid
 
 
   Int cStride = (isVertical) ? srcStride : 1;
-  src -= ((N >> 1) - 1) * cStride;
+  src -=  cStride;
 
   Int offset;
   Pel maxVal;
@@ -399,7 +400,7 @@ Void TComInterpolationFilter::filter4(Int bitDepth, Pel const *src, Int srcStrid
       Pel val = (sum + offset) >> shift;
       if (isLast)
       {
-        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
+        val = clip2_m0(val, maxVal);
       }
       dst[col] = val;
     }
@@ -427,7 +428,36 @@ Void TComInterpolationFilter::filter4(Int bitDepth, Pel const *src, Int srcStrid
 template<Int N>
 Void TComInterpolationFilter::filterHor(Int bitDepth, Pel *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, Bool isLast, TFilterCoeff const *coeff)
 {
-  filter<N, false, true, isLast>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+  if (isLast)
+  {
+    switch (N)
+    {
+    case(4) :
+      filter4<false, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    case(8) :
+      filter8<false, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    default:
+      filter<N, false, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    }
+  }
+  else
+  {
+    switch (N)
+    {
+    case(4) :
+      filter4<false, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    case(8) :
+      filter8<false, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    default:
+      filter<N, false, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    }
+  }
 }
 
 /**
@@ -450,19 +480,59 @@ Void TComInterpolationFilter::filterVer(Int bitDepth, Pel *src, Int srcStride, P
 {
   if ( isFirst && isLast )
   {
-    filter<N, true, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    switch (N)
+    {
+    case(4):
+      filter4<true, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    case(8):
+      filter8<true, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    default:
+      filter<N, true, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    }
   }
-  else if ( isFirst && !isLast )
+  else if (isFirst && !isLast)
   {
-    filter<N, true, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    switch (N)
+    {
+    case(4) :
+      filter4<true, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    case(8) :
+      filter8<true, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    default:
+      filter<N, true, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    }
   }
   else if ( !isFirst && isLast )
   {
-    filter<N, true, false, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    switch (N)
+    {
+    case(4) :
+      filter4<true, false, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    case(8) :
+      filter8<true, false, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    default:
+      filter<N, true, false, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    }
   }
   else
   {
-    filter<N, true, false, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    switch (N)
+    {
+    case(4) :
+      filter4<true, false, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    case(8) :
+      filter8<true, false, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+      break;
+    default:
+      filter<N, true, false, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
+    }
   }
 }
 
