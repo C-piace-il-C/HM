@@ -427,14 +427,7 @@ Void TComInterpolationFilter::filter4(Int bitDepth, Pel const *src, Int srcStrid
 template<Int N>
 Void TComInterpolationFilter::filterHor(Int bitDepth, Pel *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, Bool isLast, TFilterCoeff const *coeff)
 {
-  if ( isLast )
-  {
-    filter<N, false, true, true>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
-  }
-  else
-  {
-    filter<N, false, true, false>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
-  }
+  filter<N, false, true, isLast>(bitDepth, src, srcStride, dst, dstStride, width, height, coeff);
 }
 
 /**
