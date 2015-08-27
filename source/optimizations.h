@@ -1,3 +1,5 @@
+#ifndef OPTIMIZATIONS_H
+#define OPTIMIZATIONS_H
 //#include "optimizations.h"
 
 // if x < min return ( min );
@@ -35,10 +37,12 @@ __inline int clip2_m0(int x, const int max)
 #else
 __inline int clip2(int x, const int min, const int max)
 {
-	return( x < min ? min : (x > max ? max : x) );
+  return( x < min ? min : (x > max ? max : x) );
 }
 __inline int clip2_m0(int x, const int max)
 {
-	return( x < 0 ? 0 : (x > max ? max : x) );
+  return( x < 0 ? 0 : (x > max ? max : x) );
 }
+#endif
+
 #endif
