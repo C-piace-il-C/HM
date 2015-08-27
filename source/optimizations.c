@@ -23,7 +23,7 @@ OPTIMIZATIONS::int clip2_m0(int x, const int max)
 {
   asm (
     "BICS %0, %0, %0, ASR #31 \n" 
-	"ITT GE""
+	"ITT GE \n"
 	"CMPGE %0, %1 \n"
 	"MOVGE %0, %1 \n"
 	: "+r"(x) : "r"(max) : "cc"
