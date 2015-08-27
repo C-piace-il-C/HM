@@ -173,91 +173,100 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
 template<Int N, Bool isVertical, Bool isFirst, Bool isLast>
 Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff)
 {
-  Int row, col;
+	Int row, col;
 
-  Pel c[8];
-  c[0] = coeff[0];
-  c[1] = coeff[1];
+	Pel c[8];
+	c[0] = coeff[0];
+	c[1] = coeff[1];
 
-  if ( N >= 4 )
-  {
-    c[2] = coeff[2];
-    c[3] = coeff[3];
-  }
-  if ( N >= 6 )
-  {
-    c[4] = coeff[4];
-    c[5] = coeff[5];
-  }
-  if ( N == 8 )
-  {
-    c[6] = coeff[6];
-    c[7] = coeff[7];
-  }
+	if (N >= 4)
+	{
+		c[2] = coeff[2];
+		c[3] = coeff[3];
+	}
+	if (N >= 6)
+	{
+		c[4] = coeff[4];
+		c[5] = coeff[5];
+	}
+	if (N == 8)
+	{
+		c[6] = coeff[6];
+		c[7] = coeff[7];
+	}
 
-  Int cStride = ( isVertical ) ? srcStride : 1;
-  src -= ( N/2 - 1 ) * cStride;
+	Int cStride = (isVertical) ? srcStride : 1;
+	src -= ((N >> 1) - 1) * cStride;
 
-  Int offset;
-  Pel maxVal;
-  Int headRoom = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
-  Int shift    = IF_FILTER_PREC;
-  // with the current settings (IF_INTERNAL_PREC = 14 and IF_FILTER_PREC = 6), though headroom can be
-  // negative for bit depths greater than 14, shift will remain non-negative for bit depths of 8->20
-  assert(shift >= 0); //  %%OPT sostituisci shift con IF_FILTER_PREC
+	Int offset;
+	Pel maxVal;
+	Int headRoom = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
+	Int shift = IF_FILTER_PREC;
+	// with the current settings (IF_INTERNAL_PREC = 14 and IF_FILTER_PREC = 6), though headroom can be
+	// negative for bit depths greater than 14, shift will remain non-negative for bit depths of 8->20
+	// assert(IF_FILTER_PREC >= 0); rimosso perché #define IF_FILTER_PREC 6 e non abbiamo intenzione di modificarlo
 
-  if ( isLast )
-  {
-    shift += (isFirst) ? 0 : headRoom; //%%opt sto if si può fare una sola volta
-    offset = 1 << (shift - 1);
-    offset += (isFirst) ? 0 : IF_INTERNAL_OFFS << IF_FILTER_PREC;
-    maxVal = (1 << bitDepth) - 1;
-  }
-  else
-  {
-    shift -= (isFirst) ? headRoom : 0;  // %%OPT questi due if si possono fare una sola volta
-    offset = (isFirst) ? -IF_INTERNAL_OFFS << shift : 0;
-    maxVal = 0;
-  }
+	if ( isLast )
+	{
+		offset = 1 << (shift - 1);
+		if ( !isFirst )
+		{
+			shift += headRoom;
+			offset = 1 << (shift - 1);
+			offset += IF_INTERNAL_OFFS << IF_FILTER_PREC;
+		}
+		maxVal = (1 << bitDepth) - 1;
+	}
+	else
+	{
+		offset = 0;
+		if ( isFirst )
+		{
+			shift -= headRoom;
+			offset = -IF_INTERNAL_OFFS << shift;
+		}
+		maxVal = 0;
+	}
 
-  for (row = 0; row < height; row++) // %%OPT questo for può essere migliorato (row non si utilizza)
-  {
-    for (col = 0; col < width; col++) // loop vectorized + peeled.
-    {
-      Int sum;
+	for (row = 0; row < height; row++) // %%OPT questo for può essere migliorato (row non si utilizza)
+	{
+		for (col = 0; col < width; col++) // loop vectorized + peeled.
+		{
+			Int sum;
 
-      sum  = src[ col + 0 * cStride] * c[0];
-      sum += src[ col + 1 * cStride] * c[1];
+			sum = src[col + 0 * cStride] * c[0];
+			sum += src[col + 1 * cStride] * c[1];
 
-      if ( N >= 4 )  // %%OPT questi if si possono sostituire con uno switch fisso, oppure addiriturra portarli fuori dal for
-      {
-        sum += src[ col + 2 * cStride] * c[2];
-        sum += src[ col + 3 * cStride] * c[3];
-      }
-      if ( N >= 6 )
-      {
-        sum += src[ col + 4 * cStride] * c[4];
-        sum += src[ col + 5 * cStride] * c[5];
-      }
-      if ( N == 8 )
-      {
-        sum += src[ col + 6 * cStride] * c[6];
-        sum += src[ col + 7 * cStride] * c[7];
-      }
+			if (N >= 4) 
+			{
+				sum += src[col + 2 * cStride] * c[2];
+				sum += src[col + 3 * cStride] * c[3];
+			}
+			if (N >= 6)
+			{
+				sum += src[col + 4 * cStride] * c[4];
+				sum += src[col + 5 * cStride] * c[5];
+			}
+			if (N == 8)
+			{
+				sum += src[col + 6 * cStride] * c[6];
+				sum += src[col + 7 * cStride] * c[7];
+			}
 
-      Pel val = ( sum + offset ) >> shift;
-      if ( isLast )
-      {
-        val = ( val < 0 ) ? 0 : val;  
-        val = ( val > maxVal ) ? maxVal : val; //%%OPT sostituisci questa e la precedente con un clip2
-      }
-      dst[col] = val;
-    }
+			Pel val = (sum + offset) >> shift;
+			if (isLast)
+			{
+				val = (val < 0) ? 0 : val;
+				val = (val > maxVal) ? maxVal : val; //%%OPT sostituisci questa e la precedente con un clip2
+			}
+			dst[col] = val;
+		}
 
-    src += srcStride;
-    dst += dstStride;
-  }
+		src += srcStride;
+		dst += dstStride;
+	}
 }
+
 
 /**
  * \brief Filter a block of samples (horizontal)
