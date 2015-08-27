@@ -98,7 +98,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
 
   if ( isFirst == isLast )
   {
-    for (row = 0; row < height; row++) // %%OPT inverti ordine di row
+    for (row = height; row > 0; row--) 
     {
       for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
@@ -113,7 +113,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
   {
     const Int shift = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
 
-    for (row = 0; row < height; row++) // %%OPT inverti ordine di row
+    for (row = height; row > 0; row--)
     {
       for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
@@ -137,8 +137,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
       {
         Pel val = src[ col ];
         val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
-        // %%OPT sostituisci sti if con un clip2
-        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
+        val = (short)OPTIMIZATIONS::clip2_m0(val, maxVal);
         dst[col] = val;
       }
 
