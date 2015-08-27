@@ -228,7 +228,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 		maxVal = 0;
 	}
 
-	for (row = 0; row < height; row++) // %%OPT questo for può essere migliorato (row non si utilizza)
+  for (row = height; row > 0; row--) // %%OPT questo for può essere migliorato (row non si utilizza)
 	{
 		for (col = 0; col < width; col++) // loop vectorized + peeled.
 		{
