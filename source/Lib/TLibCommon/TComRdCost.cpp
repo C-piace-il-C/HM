@@ -769,38 +769,74 @@ Distortion TComRdCost::xGetSAD24( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur*iSubStep;
   Int  iStrideOrg = pcDtParam->iStrideOrg*iSubStep;
 
-  Distortion uiSum = 0;
+  uint32x4_t v_uiSum0 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum1 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum2 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum3 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum4 = vdupq_n_u32(0);
+  uint32x4_t v_uiSum5 = vdupq_n_u32(0);
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    uiSum += abs( piOrg[0] - piCur[0] ); // %%OPT vettorizza 
-    uiSum += abs( piOrg[1] - piCur[1] );
-    uiSum += abs( piOrg[2] - piCur[2] );
-    uiSum += abs( piOrg[3] - piCur[3] );
-    uiSum += abs( piOrg[4] - piCur[4] );
-    uiSum += abs( piOrg[5] - piCur[5] );
-    uiSum += abs( piOrg[6] - piCur[6] );
-    uiSum += abs( piOrg[7] - piCur[7] );
-    uiSum += abs( piOrg[8] - piCur[8] );
-    uiSum += abs( piOrg[9] - piCur[9] );
-    uiSum += abs( piOrg[10] - piCur[10] );
-    uiSum += abs( piOrg[11] - piCur[11] );
-    uiSum += abs( piOrg[12] - piCur[12] );
-    uiSum += abs( piOrg[13] - piCur[13] );
-    uiSum += abs( piOrg[14] - piCur[14] );
-    uiSum += abs( piOrg[15] - piCur[15] );
-    uiSum += abs( piOrg[16] - piCur[16] );
-    uiSum += abs( piOrg[17] - piCur[17] );
-    uiSum += abs( piOrg[18] - piCur[18] );
-    uiSum += abs( piOrg[19] - piCur[19] );
-    uiSum += abs( piOrg[20] - piCur[20] );
-    uiSum += abs( piOrg[21] - piCur[21] );
-    uiSum += abs( piOrg[22] - piCur[22] );
-    uiSum += abs( piOrg[23] - piCur[23] );
+    // v_uiSum0 += |piOrg - piCur|  in  [0; 3]
+    v_uiSum0 = vabal_u16(
+        v_uiSum0,                      
+        vld1_u16((uint16_t *)&piOrg[0]),
+        vld1_u16((uint16_t *)&piCur[0])
+      );
+
+    // v_uiSum1 += |piOrg - piCur|  in  [4; 7]
+    v_uiSum1 = vabal_u16(
+        v_uiSum1,                      
+        vld1_u16((uint16_t *)&piOrg[4]),
+        vld1_u16((uint16_t *)&piCur[4])
+      );
+
+    // v_uiSum2 += |piOrg - piCur|  in  [8; 11]
+    v_uiSum2 = vabal_u16(
+        v_uiSum2,                      
+        vld1_u16((uint16_t *)&piOrg[8]),
+        vld1_u16((uint16_t *)&piCur[8])
+      );
+
+    // v_uiSum3 += |piOrg - piCur|  in  [12; 15]
+    v_uiSum3 = vabal_u16(
+        v_uiSum3,                      
+        vld1_u16((uint16_t *)&piOrg[12]),
+        vld1_u16((uint16_t *)&piCur[12])
+      );
+
+    // v_uiSum4 += |piOrg - piCur|  in  [16; 19]
+    v_uiSum4 = vabal_u16(
+        v_uiSum4,                      
+        vld1_u16((uint16_t *)&piOrg[16]),
+        vld1_u16((uint16_t *)&piCur[16])
+      );
+
+    // v_uiSum5 += |piOrg - piCur|  in  [20; 23]
+    v_uiSum5 = vabal_u16(
+        v_uiSum5,                      
+        vld1_u16((uint16_t *)&piOrg[20]),
+        vld1_u16((uint16_t *)&piCur[20])
+      );
 
     piOrg += iStrideOrg;
     piCur += iStrideCur;
   }
+
+  Distortion uiSum =
+    vgetq_lane_u32(v_uiSum0, 0) + vgetq_lane_u32(v_uiSum0, 1) +
+    vgetq_lane_u32(v_uiSum0, 2) + vgetq_lane_u32(v_uiSum0, 3) +
+    vgetq_lane_u32(v_uiSum1, 0) + vgetq_lane_u32(v_uiSum1, 1) +
+    vgetq_lane_u32(v_uiSum1, 2) + vgetq_lane_u32(v_uiSum1, 3) +
+    vgetq_lane_u32(v_uiSum2, 0) + vgetq_lane_u32(v_uiSum2, 1) +
+    vgetq_lane_u32(v_uiSum2, 2) + vgetq_lane_u32(v_uiSum2, 3) +
+    vgetq_lane_u32(v_uiSum3, 0) + vgetq_lane_u32(v_uiSum3, 1) +
+    vgetq_lane_u32(v_uiSum3, 2) + vgetq_lane_u32(v_uiSum3, 3) +
+    vgetq_lane_u32(v_uiSum4, 0) + vgetq_lane_u32(v_uiSum4, 1) +
+    vgetq_lane_u32(v_uiSum4, 2) + vgetq_lane_u32(v_uiSum4, 3) +
+    vgetq_lane_u32(v_uiSum5, 0) + vgetq_lane_u32(v_uiSum5, 1) +
+    vgetq_lane_u32(v_uiSum5, 2) + vgetq_lane_u32(v_uiSum5, 3);
 
   uiSum <<= iSubShift;
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
