@@ -138,7 +138,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
       {
         Pel val = src[ col ];
         val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
-        val = clip2_m0(val, maxVal);
+        val = clip2_m0s(val, maxVal);
         dst[col] = val;
       }
 
@@ -250,7 +250,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 			Pel val = (sum + offset) >> shift;
 			if (isLast)
 			{
-        val = clip2_m0(val, maxVal);
+        val = clip2_m0s(val, maxVal);
 			}
 			dst[col] = val;
 		}
@@ -329,7 +329,7 @@ Void TComInterpolationFilter::filter8(Int bitDepth, Pel const *src, Int srcStrid
       Pel val = (sum + offset) >> shift;
       if (isLast)
       {
-        val = clip2_m0(val, maxVal);
+        val = clip2_m0s(val, maxVal);
       }
       dst[col] = val;
     }
@@ -400,7 +400,7 @@ Void TComInterpolationFilter::filter4(Int bitDepth, Pel const *src, Int srcStrid
       Pel val = (sum + offset) >> shift;
       if (isLast)
       {
-        val = clip2_m0(val, maxVal);
+        val = clip2_m0s(val, maxVal);
       }
       dst[col] = val;
     }
