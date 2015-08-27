@@ -221,7 +221,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 		maxVal = 0;
 	}
 
-  for (row = height; row > 0; row--) // %%OPT questo for può essere migliorato (row non si utilizza)
+  for (row = height; row > 0; row--)
 	{
 		for (col = 0; col < width; col++) // loop vectorized + peeled.
 		{
@@ -249,8 +249,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 			Pel val = (sum + offset) >> shift;
 			if (isLast)
 			{
-				val = (val < 0) ? 0 : val;
-				val = (val > maxVal) ? maxVal : val; //%%OPT sostituisci questa e la precedente con un clip2
+        val = OPTIMIZATIONS::clip2_m0(val, maxVal);
 			}
 			dst[col] = val;
 		}
@@ -259,6 +258,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 		dst += dstStride;
 	}
 }
+
 
 
 /**
