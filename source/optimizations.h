@@ -9,6 +9,17 @@
 // NOTA: questa è meglio del C
 
 #ifdef __arm__
+__inline int abs(int x)
+{
+  asm (
+    "ADD %0, %0, %0, ASR #31 \n"
+	"EOR %0, %0, %0, ASR #31 \n"
+	: "+r"(x) : : "r0"
+  );
+  return(x);
+}
+
+__inline 
 __inline int clip2(int x, const int min, const int max)
 {
   asm (
