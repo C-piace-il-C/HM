@@ -46,6 +46,8 @@
 
 #include "TComChromaFormat.h"
 
+#include "../optimizations.h"
+
 
 //! \ingroup TLibCommon
 //! \{
@@ -129,22 +131,14 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
     const Int shift = std::max<Int>(2, (IF_INTERNAL_PREC - bitDepth));
 
     Pel maxVal = (1 << bitDepth) - 1;
-    Pel minVal = 0;
+    //Pel minVal = 0;
     for (row = 0; row < height; row++)
     {
       for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
         Pel val = src[ col ];
         val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
-        // %%OPT sostituisci sti if con un clip2
-		if (val < minVal) // %%OPT tra l'altro minval è 0
-        {
-          val = minVal;
-        }
-        if (val > maxVal) 
-        {
-          val = maxVal;
-        }
+        val = clip2_m0s(val, maxVal);
         dst[col] = val;
       }
 
@@ -248,8 +242,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
       Pel val = ( sum + offset ) >> shift;
       if ( isLast )
       {
-        val = ( val < 0 ) ? 0 : val;  
-        val = ( val > maxVal ) ? maxVal : val; //%%OPT sostituisci questa e la precedente con un clip2
+        val = clip2_m0s(val, maxVal);
       }
       dst[col] = val;
     }
