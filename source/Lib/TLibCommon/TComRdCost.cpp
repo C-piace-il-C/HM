@@ -1541,21 +1541,33 @@ Distortion TComRdCost::xGetHADs( DistParam* pcDtParam )
 
   Distortion uiSum = 0;
 
-  if( ( iRows % 8 == 0) && (iCols % 8 == 0) ) // %%OPT rimuovi la %
+  /*
+  asm(
+    "AND %0, #0x00070000, %0, LSL #16 \n"
+    "ORRS %0, #0x00000007, %1 \n"
+    "IT EQ \n"
+    "B COND1" // if iRows % 8 == 0 && iCols % 8 == 0 jump to COND1
+    : : "r"(iRows), "r"(iCols) : "cc"
+    );
+    */
+  if( ((iRows & 7) == 0) && ((iCols & 7) == 0) )//if( ( iRows % 8 == 0) && (iCols % 8 == 0) ) // %%OPT rimuovi la %
+//COND1:
   {
-    Int  iOffsetOrg = iStrideOrg<<3;
-    Int  iOffsetCur = iStrideCur<<3;
-    for ( y=0; y<iRows; y+= 8 ) // %%OPT rimuovi la y
+    Int  iOffsetOrg = iStrideOrg << 3;
+    Int  iOffsetCur = iStrideCur << 3;
+    for (y = 0; y < iRows; y += 8) // %%OPT rimuovi la y
     {
-      for ( x=0; x<iCols; x+= 8 )
+      for (x = 0; x < iCols; x += 8)
       {
-        uiSum += xCalcHADs8x8( &piOrg[x], &piCur[x*iStep], iStrideOrg, iStrideCur, iStep );
+        uiSum += xCalcHADs8x8(&piOrg[x], &piCur[x*iStep], iStrideOrg, iStrideCur, iStep);
       }
       piOrg += iOffsetOrg;
       piCur += iOffsetCur;
     }
+    return (uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth - 8));
   }
-  else if( ( iRows % 4 == 0) && (iCols % 4 == 0) ) // %%OPT rimuovi la %
+  else if( ((iRows & 3) == 0) && ((iCols & 3) == 0) )//else if( ( iRows % 4 == 0) && (iCols % 4 == 0) ) // %%OPT rimuovi la %
+  //COND2:
   {
     Int  iOffsetOrg = iStrideOrg<<2;
     Int  iOffsetCur = iStrideCur<<2;
@@ -1569,8 +1581,10 @@ Distortion TComRdCost::xGetHADs( DistParam* pcDtParam )
       piOrg += iOffsetOrg;
       piCur += iOffsetCur;
     }
+    return (uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth - 8));
   }
-  else if( ( iRows % 2 == 0) && (iCols % 2 == 0) ) // %%OPT rimuovi la %
+  else if( ((iRows & 1) == 0) && ((iCols & 1) == 0) ) // %%OPT rimuovi la %
+  //COND3:
   {
     Int  iOffsetOrg = iStrideOrg<<1;
     Int  iOffsetCur = iStrideCur<<1;
@@ -1584,10 +1598,10 @@ Distortion TComRdCost::xGetHADs( DistParam* pcDtParam )
       piCur += iOffsetCur;
     }
   }
-  else
-  {
-    assert(false);
-  }
+  //else
+  //{
+  //  assert(false);   è possibile rimuoverlo perché non ci interessa fixare bug
+  //}
 
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
 }
