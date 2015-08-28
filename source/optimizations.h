@@ -81,3 +81,4 @@ __inline int clip2_m0(int x, const int max)
   return( x < 0 ? 0 : (x > max ? max : x) );
 }
 #endif
+#endif 
