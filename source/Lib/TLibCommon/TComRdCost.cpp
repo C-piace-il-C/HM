@@ -506,13 +506,13 @@ Distortion TComRdCost::xGetSAD4( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur*iSubStep;
   Int  iStrideOrg = pcDtParam->iStrideOrg*iSubStep;
 
-  int16x4_t v_uiSum0 = vdup_n_s16(0);
+  int16x4_t v_iSum0 = vdup_n_s16(0);
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    // v_uiSum0 += |piOrg - piCur|  in  [0; 3]
-    v_uiSum0 = vaba_s16(
-        v_uiSum0,                      
+    // v_iSum0 += |piOrg - piCur|  in  [0; 3]
+    v_iSum0 = vaba_s16(
+        v_iSum0,                      
         vld1_s16((int16_t *)&piOrg[0]),
         vld1_s16((int16_t *)&piCur[0])
       );
@@ -523,8 +523,8 @@ Distortion TComRdCost::xGetSAD4( DistParam* pcDtParam )
 
   Distortion uiSum = (UInt)
     (
-      vget_lane_s16(v_uiSum0, 0) + vget_lane_s16(v_uiSum0, 1) +
-      vget_lane_s16(v_uiSum0, 2) + vget_lane_s16(v_uiSum0, 3)
+      vget_lane_s16(v_iSum0, 0) + vget_lane_s16(v_iSum0, 1) +
+      vget_lane_s16(v_iSum0, 2) + vget_lane_s16(v_iSum0, 3)
     );
 
   uiSum <<= iSubShift;
@@ -545,26 +545,28 @@ Distortion TComRdCost::xGetSAD8( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur*iSubStep;
   Int  iStrideOrg = pcDtParam->iStrideOrg*iSubStep;
 
-  uint16x8_t v_uiSum0 = vdupq_n_u16(0);
+  int16x8_t v_iSum0 = vdupq_n_s16(0);
 
   for( ; iRows != 0; iRows-=iSubStep )
   {
-    // v_uiSum0 += |piOrg - piCur|  -  [0; 7]
-    v_uiSum0 = vabaq_u16(
-      v_uiSum0,
-      vld1q_u16((uint16_t *)&piOrg[0]),
-      vld1q_u16((uint16_t *)&piCur[0])
+    // v_iSum0 += |piOrg - piCur|  in  [0; 7]
+    v_iSum0 = vabaq_s16(
+        v_iSum0,
+        vld1q_s16((int16_t *)&piOrg[0]),
+        vld1q_s16((int16_t *)&piCur[0])
       );
 
     piOrg += iStrideOrg;
     piCur += iStrideCur;
   }
 
-  Distortion uiSum =
-    vgetq_lane_u16(v_uiSum0, 0) + vgetq_lane_u16(v_uiSum0, 1) +
-    vgetq_lane_u16(v_uiSum0, 2) + vgetq_lane_u16(v_uiSum0, 3) +
-    vgetq_lane_u16(v_uiSum0, 4) + vgetq_lane_u16(v_uiSum0, 5) +
-    vgetq_lane_u16(v_uiSum0, 6) + vgetq_lane_u16(v_uiSum0, 7);
+  Distortion uiSum = (UInt)
+    (
+      vgetq_lane_s16(v_iSum0, 0) + vgetq_lane_s16(v_iSum0, 1) +
+      vgetq_lane_s16(v_iSum0, 2) + vgetq_lane_s16(v_iSum0, 3) +
+      vgetq_lane_s16(v_iSum0, 4) + vgetq_lane_s16(v_iSum0, 5) +
+      vgetq_lane_s16(v_iSum0, 6) + vgetq_lane_s16(v_iSum0, 7)
+    );
 
   uiSum <<= iSubShift;
   return ( uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8) );
