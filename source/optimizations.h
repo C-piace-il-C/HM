@@ -9,12 +9,13 @@
 // NOTA: questa è meglio del C
 
 #ifdef __arm__
+
 __inline int abs_i(int x)
 {
   asm (
     "ADD %0, %0, %0, ASR #31 \n"
-	"EOR %0, %0, %0, ASR #31 \n"
-	: "+r"(x) : : "r0"
+    "EOR %0, %0, %0, ASR #31 \n"
+    : "+r"(x) : : "r0"
   );
   return(x);
 }
@@ -25,9 +26,9 @@ __inline short abs_s(short x)
   asm (
     "MOV %0, %0, LSL #16 \n"
     "ADD %0, %0, %0, ASR #31 \n"
-	"EOR %0, %0, %0, ASR #31 \n"
-	"MOV %0, %0, ASR #16 \n"
-	: "+r"(x)
+    "EOR %0, %0, %0, ASR #31 \n"
+    "MOV %0, %0, ASR #16 \n"
+    : "+r"(x)
   );
   return(x);
 }
@@ -70,14 +71,18 @@ __inline short clip2_m0s(short x, const short max)
   return(x);
 }
 
-#else
-	
+#else // !__arm__
+
 __inline int clip2(int x, const int min, const int max)
 {
   return( x < min ? min : (x > max ? max : x) );
 }
+
 __inline int clip2_m0(int x, const int max)
 {
   return( x < 0 ? 0 : (x > max ? max : x) );
 }
-#endif
+
+#endif // !__arm__
+
+#endif // !OPTIMIZATIONS_H
