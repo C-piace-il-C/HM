@@ -208,7 +208,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
 
   if ( isLast )
   {
-    shift += (isFirst) ? 0 : headRoom;
+    shift += (isFirst) ? 0 : headRoom; //%%opt sto if si può fare una sola volta
     offset = 1 << (shift - 1);
     offset += (isFirst) ? 0 : IF_INTERNAL_OFFS << IF_FILTER_PREC;
     maxVal = (1 << bitDepth) - 1;
@@ -229,7 +229,7 @@ Void TComInterpolationFilter::filter(Int bitDepth, Pel const *src, Int srcStride
       sum  = src[ col + 0 * cStride] * c[0];
       sum += src[ col + 1 * cStride] * c[1];
 
-      if ( N >= 4 )  // %%OPT questi if si possono sostituire con uno switch fisso
+      if ( N >= 4 )  // %%OPT questi if si possono sostituire con uno switch fisso, oppure addiriturra portarli fuori dal for
       {
         sum += src[ col + 2 * cStride] * c[2];
         sum += src[ col + 3 * cStride] * c[3];
