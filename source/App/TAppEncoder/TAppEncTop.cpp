@@ -519,7 +519,7 @@ Void TAppEncTop::encode()
   m_cTEncTop.printSummary(m_isField);
 
   // delete original YUV buffer
-  pcPicYuvOrg->destroy();
+  /*pcPicYuvOrg->destroy();
   delete pcPicYuvOrg;
   pcPicYuvOrg = NULL;
 
@@ -529,13 +529,17 @@ Void TAppEncTop::encode()
 
   // delete buffers & classes
   xDeleteBuffer();
-  xDestroyLib();
+  xDestroyLib();*/
 
   printRateSummary();
 
   return;
 }
 
+
+Void TAppEncTop::dispose()
+{
+}
 // ====================================================================================================================
 // Protected member functions
 // ====================================================================================================================
