@@ -44,7 +44,6 @@
 #include "TComInterpolationFilter.h"
 #include <assert.h>
 
-#include "../optimizations.h"
 
 #include "TComChromaFormat.h"
 
