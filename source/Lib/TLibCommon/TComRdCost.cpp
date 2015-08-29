@@ -1352,14 +1352,17 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   m[ 1] = diff[ 1] + diff[13];
   m[ 2] = diff[ 2] + diff[14];
   m[ 3] = diff[ 3] + diff[15];
+
   m[ 4] = diff[ 4] + diff[ 8];
   m[ 5] = diff[ 5] + diff[ 9];
   m[ 6] = diff[ 6] + diff[10];
   m[ 7] = diff[ 7] + diff[11];
+
   m[ 8] = diff[ 4] - diff[ 8];
   m[ 9] = diff[ 5] - diff[ 9];
   m[10] = diff[ 6] - diff[10];
   m[11] = diff[ 7] - diff[11];
+
   m[12] = diff[ 0] - diff[12];
   m[13] = diff[ 1] - diff[13];
   m[14] = diff[ 2] - diff[14];
