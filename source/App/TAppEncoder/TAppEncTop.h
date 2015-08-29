@@ -94,6 +94,7 @@ public:
 
   Void        encode      ();                               ///< main encoding function
   TEncTop&    getTEncTop  ()   { return  m_cTEncTop; }      ///< return encoder class pointer reference
+  Void        dispose     ();
 
 };// END CLASS DEFINITION TAppEncTop
 
