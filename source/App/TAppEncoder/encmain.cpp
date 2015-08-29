@@ -138,8 +138,11 @@ int main(int argc, char* argv[])
   clock_t lBefore = clock();
 
   // multithreaded execution
-  
-
+  //std::thread(encoding_thread, argc, argv0).detach();
+  TAppEncTop cTAppEncTop;
+  cTAppEncTop.create();
+  cTAppEncTop.parseCfg(argc, argv0);
+  cTAppEncTop.encode();
 
   // ending time
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
