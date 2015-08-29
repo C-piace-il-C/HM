@@ -47,8 +47,6 @@
 #include "../Lib/TLibCommon/Debug.h"
 
 
-
-
 void encoding_thread(int argc, char** argv)
 {
   TAppEncTop cTAppEncTop;
@@ -56,7 +54,6 @@ void encoding_thread(int argc, char** argv)
   cTAppEncTop.parseCfg(argc, argv);
   cTAppEncTop.encode();
 }
-
 
 
 // ====================================================================================================================
@@ -127,8 +124,14 @@ int main(int argc, char* argv[])
   out0.close();
   out1.close();
   // build two new argvs
-  char* argv0[] = { argv[0], argv[1], (sequence_cfg + "0").c_str, argv[2], argv[3] };
-  char* argv1[] = { argv[0], argv[1], (sequence_cfg + "1").c_str, argv[2], argv[3] };
+  char* cfg_filename0 = new char[sequence_cfg.length() + 2];
+  sprintf(cfg_filename0, "%s0", sequence_cfg.c_str());
+  char* cfg_filename1 = new char[sequence_cfg.length() + 2];
+  sprintf(cfg_filename1, "%s1", sequence_cfg.c_str());
+  char* argv0[] = { argv[0], argv[1], cfg_filename0, argv[3], argv[4] };
+  char* argv1[] = { argv[0], argv[1], cfg_filename1, argv[3], argv[4] };
+
+
 
   // starting time
   Double dResult;
