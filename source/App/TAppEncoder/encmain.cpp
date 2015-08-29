@@ -76,6 +76,8 @@ int main(int argc, char* argv[])
   // analyze configure files
   int cfg_cnt = 0;
   int IntraPeriod, FrameSkip, FramesToBeEncoded;
+  std::string sequence_cfg;
+  std::string coding_cfg;
   for (int C = 0; C < argc; C++)
   {
     if (strcmp("-c", argv[C]) == 0)
@@ -83,16 +85,50 @@ int main(int argc, char* argv[])
       cfg_cnt++;
       if (cfg_cnt == 1)
       {
+        sequence_cfg = argv[C + 1];
         FrameSkip = cfgGetParam(argv[C + 1], "FrameSkip");
         FramesToBeEncoded = cfgGetParam(argv[C + 1], "FramesToBeEncoded");
       }
       else if (cfg_cnt == 2)
+      {
+        coding_cfg = argv[C + 1];
         IntraPeriod = cfgGetParam(argv[C + 1], "IntraPeriod");
+      }
+      
     }
   }
 
-
-
+  // build two new configure files
+  int periodCount   = FramesToBeEncoded / IntraPeriod;
+  int frameCount_t1 = periodCount / 2 * IntraPeriod;
+  int frameCount_t0 = FramesToBeEncoded - frameCount_t1;
+  std::ifstream in0(sequence_cfg);
+  std::ofstream out0(sequence_cfg + "0");
+  std::ofstream out1(sequence_cfg + "1");
+  std::string line;
+  while (std::getline(in0, line))
+  {
+    if (line.find("FrameSkip") != string::npos) // correct line
+    {
+      out0 << "FrameSkip                     : 0\n";
+      out1 << "FrameSkip                     : " << frameCount_t0 << "\n";
+    }
+    else if (line.find("FramesToBeEncoded") != string::npos)
+    {
+      out0 << "FramesToBeEncoded             : " << frameCount_t0 << "\n";
+      out1 << "FramesToBeEncoded             : " << frameCount_t1 << "\n";
+    }
+    else
+    {
+      out0 << line << "\n";
+      out1 << line << "\n";
+    }
+  }
+  out0.close();
+  out1.close();
+  // build two new argvs
+  char* argv0[] = { argv[0], argv[1], (sequence_cfg + "0").c_str, argv[2], argv[3] };
+  char* argv1[] = { argv[0], argv[1], (sequence_cfg + "1").c_str, argv[2], argv[3] };
 
   // starting time
   Double dResult;
