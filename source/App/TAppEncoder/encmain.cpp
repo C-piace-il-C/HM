@@ -47,13 +47,11 @@
 #include "../Lib/TLibCommon/Debug.h"
 
 
-void encoding_thread(int argc, char** argv)
+void encoding_thread(int argc, char** argv, TAppEncTop* pAppEncTop)
 {
-  TAppEncTop cTAppEncTop;
-  cTAppEncTop.create();
-  cTAppEncTop.parseCfg(argc, argv);
-  cTAppEncTop.encode();
-  cTAppEncTop.destroy();
+  pAppEncTop->create();
+  pAppEncTop->parseCfg(argc, argv);
+  pAppEncTop->encode(); 
 }
 
 int cfgGetParam(char* configureFilename, char* paramName);
@@ -92,7 +90,7 @@ int main(int argc, char* argv[])
         coding_cfg = argv[C + 1];
         IntraPeriod = cfgGetParam(argv[C + 1], "IntraPeriod");
       }
-      
+
     }
   }
 
@@ -163,23 +161,25 @@ int main(int argc, char* argv[])
 
 
 
+  TAppEncTop cTAppEncTop;
+  TAppEncTop cTAppEncTop2;
   // starting time
   Double dResult;
   clock_t lBefore = clock();
   // start secondary thread encoding
-  std::thread encThread(encoding_thread, argc, argv1);
+  std::thread encThread(encoding_thread, argc, argv0, &cTAppEncTop2);
   // main thread encoding
-  TAppEncTop cTAppEncTop;
   cTAppEncTop.create();
-  cTAppEncTop.parseCfg(argc, argv0);
+  cTAppEncTop.parseCfg(argc, argv1);
   cTAppEncTop.encode();
-  cTAppEncTop.destroy();
   // wait for secondary thread to finish
   encThread.join();
   // ending time
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
 
+  cTAppEncTop.destroy();
+  cTAppEncTop2.destroy();
 
   return 0;
 }
