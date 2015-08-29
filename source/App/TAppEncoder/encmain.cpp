@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 
   // analyze configure files
   int cfg_cnt = 0;
-  int IntraPeriod, FrameSkip, FramesToBeEncoded;
+  int IntraPeriod = 0, FrameSkip = 0, FramesToBeEncoded = 0;
   std::string sequence_cfg;
   std::string coding_cfg;
   for (int C = 0; C < argc; C++)
@@ -108,8 +108,8 @@ int main(int argc, char* argv[])
   {
     if (line.find("FrameSkip") != string::npos) // correct line
     {
-      out0 << "FrameSkip                     : 0\n";
-      out1 << "FrameSkip                     : " << frameCount_t0 << "\n";
+      out0 << "FrameSkip                     : " << FrameSkip << "\n";
+      out1 << "FrameSkip                     : " << FrameSkip + frameCount_t0 << "\n";
     }
     else if (line.find("FramesToBeEncoded") != string::npos)
     {
@@ -181,10 +181,12 @@ int main(int argc, char* argv[])
   cTAppEncTop.destroy();
   cTAppEncTop2.destroy();
 
+  // Write something that merges str0.bin and str1.bin
+  // and deletes str0.bin,str1.bin, 
   return 0;
 }
 
-int cfgGetParam(char* configureFilename, char* paramName)
+int cfgGetParam(char* configureFilename, const char* paramName)
 {
   std::ifstream file(configureFilename);
   std::string str;
