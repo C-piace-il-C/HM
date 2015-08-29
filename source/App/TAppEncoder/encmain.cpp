@@ -35,6 +35,7 @@
     \brief    Encoder application main
 */
 
+//#include <thread>
 #include <time.h>
 #include <iostream>
 #include "TAppEncTop.h"
@@ -45,7 +46,7 @@
 
 #include "../Lib/TLibCommon/Debug.h"
 
-#include <thread>
+
 
 
 void encoding_thread(int argc, char** argv)
@@ -61,7 +62,7 @@ void encoding_thread(int argc, char** argv)
 // ====================================================================================================================
 // Main function
 // ====================================================================================================================
-
+int cfgGetParam(char* configureFilename, char* paramName);
 int main(int argc, char* argv[])
 {
   // print information
@@ -72,12 +73,34 @@ int main(int argc, char* argv[])
   fprintf( stdout, NVM_BITS );
   fprintf( stdout, "\n\n" );
 
+  // analyze configure files
+  int cfg_cnt = 0;
+  int IntraPeriod, FrameSkip, FramesToBeEncoded;
+  for (int C = 0; C < argc; C++)
+  {
+    if (strcmp("-c", argv[C]) == 0)
+    {
+      cfg_cnt++;
+      if (cfg_cnt == 1)
+      {
+        FrameSkip = cfgGetParam(argv[C + 1], "FrameSkip");
+        FramesToBeEncoded = cfgGetParam(argv[C + 1], "FramesToBeEncoded");
+      }
+      else if (cfg_cnt == 2)
+        IntraPeriod = cfgGetParam(argv[C + 1], "IntraPeriod");
+    }
+  }
+
+
+
 
   // starting time
   Double dResult;
   clock_t lBefore = clock();
 
   // multithreaded execution
+  
+
 
   // ending time
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
@@ -85,6 +108,22 @@ int main(int argc, char* argv[])
 
 
   return 0;
+}
+
+int cfgGetParam(char* configureFilename, char* paramName)
+{
+  std::ifstream file(configureFilename);
+  std::string str;
+  while (std::getline(file, str))
+  {
+    if (str.find(paramName) != string::npos) // correct line
+    {
+      std::string paramValue = str.substr(str.find(":") + 1);
+      file.close();
+      return(stoi(paramValue));
+    }
+  }
+  return(16);
 }
 
 //! \}
