@@ -53,13 +53,14 @@ void encoding_thread(int argc, char** argv)
   cTAppEncTop.create();
   cTAppEncTop.parseCfg(argc, argv);
   cTAppEncTop.encode();
+  cTAppEncTop.destroy();
 }
 
+int cfgGetParam(char* configureFilename, char* paramName);
 
 // ====================================================================================================================
 // Main function
 // ====================================================================================================================
-int cfgGetParam(char* configureFilename, char* paramName);
 int main(int argc, char* argv[])
 {
   // print information
@@ -165,14 +166,16 @@ int main(int argc, char* argv[])
   // starting time
   Double dResult;
   clock_t lBefore = clock();
-
-  // multithreaded execution
-  std::thread(encoding_thread, argc, argv1).detach();
+  // start secondary thread encoding
+  std::thread encThread(encoding_thread, argc, argv1);
+  // main thread encoding
   TAppEncTop cTAppEncTop;
   cTAppEncTop.create();
   cTAppEncTop.parseCfg(argc, argv0);
   cTAppEncTop.encode();
-
+  cTAppEncTop.destroy();
+  // wait for secondary thread to finish
+  encThread.join();
   // ending time
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
