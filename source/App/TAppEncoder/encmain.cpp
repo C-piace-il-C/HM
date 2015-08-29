@@ -123,13 +123,40 @@ int main(int argc, char* argv[])
   }
   out0.close();
   out1.close();
+  std::ifstream in1(coding_cfg);
+  std::ofstream cod0(coding_cfg + "0");
+  std::ofstream cod1(coding_cfg + "1");
+  while (std::getline(in1, line))
+  {
+    if (line.find("BitstreamFile") != string::npos) // correct line
+    {
+      cod0 << "BitstreamFile                 : str0.bin \n";
+      cod1 << "BitstreamFile                 : str1.bin \n";
+    }
+    else if (line.find("ReconFile") != string::npos)
+    {
+      cod0 << "ReconFile                     : rec0.yuv \n";
+      cod1 << "ReconFile                     : rec1.yuv \n";
+    }
+    else
+    {
+      cod0 << line << "\n";
+      cod1 << line << "\n";
+    }
+  }
+  cod0.close();
+  cod1.close();
   // build two new argvs
-  char* cfg_filename0 = new char[sequence_cfg.length() + 2];
-  sprintf(cfg_filename0, "%s0", sequence_cfg.c_str());
-  char* cfg_filename1 = new char[sequence_cfg.length() + 2];
-  sprintf(cfg_filename1, "%s1", sequence_cfg.c_str());
-  char* argv0[] = { argv[0], argv[1], cfg_filename0, argv[3], argv[4] };
-  char* argv1[] = { argv[0], argv[1], cfg_filename1, argv[3], argv[4] };
+  char* seq_cfg0 = new char[sequence_cfg.length() + 2];
+  sprintf(seq_cfg0, "%s0", sequence_cfg.c_str());
+  char* seq_cfg1 = new char[sequence_cfg.length() + 2];
+  sprintf(seq_cfg1, "%s1", sequence_cfg.c_str());
+  char* cod_cfg0 = new char[coding_cfg.length() + 2];
+  sprintf(cod_cfg0, "%s0", coding_cfg.c_str());
+  char* cod_cfg1 = new char[coding_cfg.length() + 2];
+  sprintf(cod_cfg1, "%s1", coding_cfg.c_str());
+  char* argv0[] = { argv[0], argv[1], seq_cfg0, argv[3], cod_cfg0 };
+  char* argv1[] = { argv[0], argv[1], seq_cfg1, argv[3], cod_cfg1 };
 
 
 
@@ -138,7 +165,7 @@ int main(int argc, char* argv[])
   clock_t lBefore = clock();
 
   // multithreaded execution
-  //std::thread(encoding_thread, argc, argv0).detach();
+  std::thread(encoding_thread, argc, argv1).detach();
   TAppEncTop cTAppEncTop;
   cTAppEncTop.create();
   cTAppEncTop.parseCfg(argc, argv0);
