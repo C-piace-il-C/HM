@@ -35,7 +35,7 @@
     \brief    Encoder application main
 */
 
-//#include <thread>
+#include <thread>
 #include <time.h>
 #include <iostream>
 #include "TAppEncTop.h"
