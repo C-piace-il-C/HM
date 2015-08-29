@@ -99,6 +99,8 @@ int main(int argc, char* argv[])
   int periodCount   = FramesToBeEncoded / IntraPeriod;
   int frameCount_t1 = periodCount / 2 * IntraPeriod;
   int frameCount_t0 = FramesToBeEncoded - frameCount_t1;
+  printf("multithreading settings:\nmain thread encodes frames\t[0,%i]\n",frameCount_t0-1);
+  printf("secondary thread encodes frames\t[%i, %i]\n", frameCount_t0, frameCount_t0 + frameCount_t1 - 1);
   std::ifstream in0(sequence_cfg);
   std::ofstream out0(sequence_cfg + "0");
   std::ofstream out1(sequence_cfg + "1");
