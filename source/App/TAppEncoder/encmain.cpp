@@ -58,7 +58,7 @@ void* encoding_thread(void* p)
   TAppEncTop* encoder = new TAppEncTop;
   encoder->create();
   encoder->parseCfg(params->argc, params->argv);
-  encoder->encode();
+  encoder->encode(0);
   encoder->destroy();
   return(NULL);
 }
@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
   pthread_create(&encThread, NULL, encoding_thread, (void*)&params);
   cTAppEncTop.create();
   cTAppEncTop.parseCfg(argc, argv1);
-  cTAppEncTop.encode();
+  cTAppEncTop.encode(frameCount_t0);
   cTAppEncTop.destroy();
   pthread_join(encThread, NULL);
   
