@@ -198,12 +198,17 @@ private:
   static Distortion xGetSSE64         ( DistParam* pcDtParam );
   static Distortion xGetSSE16N        ( DistParam* pcDtParam );
 
-  static Distortion xGetSAD           ( DistParam* pcDtParam );
+  static Distortion xGetSAD   
+                                      ( DistParam* pcDtParam );
   static Distortion xGetSAD4          ( DistParam* pcDtParam );
-  static Distortion xGetSAD8          ( DistParam* pcDtParam );
-  static Distortion xGetSAD16         ( DistParam* pcDtParam );
-  static Distortion xGetSAD32         ( DistParam* pcDtParam );
-  static Distortion xGetSAD64         ( DistParam* pcDtParam );
+  static Distortion xGetSAD8   __attribute__((always_inline, hot, const flatten))
+                                      ( DistParam* pcDtParam );
+  static Distortion xGetSAD16  __attribute__((always_inline, hot, const flatten))
+                                      ( DistParam* pcDtParam );
+  static Distortion xGetSAD32  __attribute__((always_inline, hot, const flatten))
+                                      ( DistParam* pcDtParam );
+  static Distortion xGetSAD64  __attribute__((always_inline, hot, const flatten))
+                                      ( DistParam* pcDtParam );
   static Distortion xGetSAD16N        ( DistParam* pcDtParam );
 
   static Distortion xGetSAD12         ( DistParam* pcDtParam );
@@ -212,8 +217,10 @@ private:
 
   static Distortion xGetHADs          ( DistParam* pcDtParam );
   static Distortion xCalcHADs2x2      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
-  static Distortion xCalcHADs4x4      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
-  static Distortion xCalcHADs8x8      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
+  static Distortion xCalcHADs4x4  __attribute__((always_inline, const, hot))
+                                      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
+  static Distortion xCalcHADs8x8  __attribute__((always_inline, const, hot))
+                                      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
 
 
 public:
