@@ -176,7 +176,6 @@ Void TEncTop::destroy ()
   delete [] m_pppcRDSbacCoder;
   delete [] m_pppcBinCoderCABAC;
 
-  // L'errore è in destroyROM()
   // destroy ROM
   destroyROM();
 

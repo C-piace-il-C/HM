@@ -152,7 +152,6 @@ Void TAppEncCfg::create()
 
 Void TAppEncCfg::destroy()
 {
-  printf("TAppEncCfg::destroy() called\n");
 }
 
 std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //input
