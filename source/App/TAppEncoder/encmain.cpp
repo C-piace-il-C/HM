@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
   cTAppEncTop.parseCfg(argc, argv1);
   cTAppEncTop.encode(frameCount_t0);
   cTAppEncTop.destroy();
-  pthread_join(encThread, NULL);
+  //pthread_join(encThread, NULL); since the memory error was corrected, this is no longer needed
   
   // End benchmark
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;

@@ -95,7 +95,7 @@ public:
 
   Void        encode      (Int pocOffset);                               ///< main encoding function
   TEncTop&    getTEncTop  ()   { return  *m_cTEncTop; }     ///< return encoder class pointer reference
-  Void        destroy     ()   {printf("TAppEncTop::destroy() called\n");}
+  Void        destroy     ()   {}
 
 };// END CLASS DEFINITION TAppEncTop
 

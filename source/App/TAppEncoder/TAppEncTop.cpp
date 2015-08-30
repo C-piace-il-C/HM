@@ -425,7 +425,6 @@ Void TAppEncTop::xDestroyLib()
 
   // Neo Decoder
   m_cTEncTop->destroy(); // IL PROBLEMA E' QUI DENTRO
-
 }
 
 Void TAppEncTop::xInitLib(Bool isFieldCoding)
@@ -591,7 +590,6 @@ Void TAppEncTop::xDeleteBuffer( )
     pcPicYuvRec->destroy();
     delete pcPicYuvRec; pcPicYuvRec = NULL;
   }
-
 }
 
 /** 
