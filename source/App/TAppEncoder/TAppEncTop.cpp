@@ -543,8 +543,8 @@ Void TAppEncTop::encode(Int pocOffset)
 
   xDeleteBuffer();
   xDestroyLib();
-  
-  printRateSummary();
+
+  //printRateSummary();
 
   return;
 }
