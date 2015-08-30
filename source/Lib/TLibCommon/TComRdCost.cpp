@@ -1444,8 +1444,8 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
         vld1_s16(piCur + 4)
       );
 
-    piCur += 8;
-    piOrg += 8;
+    piCur += iStrideCur;
+    piOrg += iStrideOrg;
   }
 
   //horizontal
