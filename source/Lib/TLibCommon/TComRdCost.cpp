@@ -1432,7 +1432,7 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
 
   assert(iStep == 1);
 
-  for (k = 0; k < 16; k++)
+  for (k = 0; k < 8; k++)
   {
     v_diff[k].val[0] = vsubl_s16(
         vld1_s16(piOrg),
