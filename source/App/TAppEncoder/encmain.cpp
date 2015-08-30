@@ -64,6 +64,7 @@ void* encoding_thread(void* p)
 }
 
 int cfgGetParam(char* configureFilename,  char const* paramName);
+void mergeBins(const char* file1, const char* file2);
 
 // ====================================================================================================================
 // Main function
@@ -99,7 +100,6 @@ int main(int argc, char* argv[])
         coding_cfg = argv[C + 1];
         IntraPeriod = cfgGetParam(argv[C + 1], "IntraPeriod");
       }
-
     }
   }
 
@@ -193,18 +193,69 @@ int main(int argc, char* argv[])
   cTAppEncTop.parseCfg(argc, argv1);
   cTAppEncTop.encode(frameCount_t0);
   cTAppEncTop.destroy();
-  //pthread_join(encThread, NULL); since the memory error was corrected, this is no longer needed
+  pthread_join(encThread, NULL);
   
   // End benchmark
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
-
-
-  // Write something that merges str0.bin and str1.bin
-  // and deletes str0.bin,str1.bin, 
+  
+  // Merge bins
+  //int pos = (coding_cfg.rfind("\\") == std::string::npos) ? coding_cfg.rfind("/") : coding_cfg.rfind("\\");
+  std::string bin0Filename = "str0.bin";
+  std::string bin1Filename = "str1.bin";
+  printf("\n\n****** file0: %s\n****** file1: %s\n", bin0Filename.c_str(), bin1Filename.c_str());
+  mergeBins(bin0Filename.c_str(), bin1Filename.c_str());
   return 0;
 }
 
+void mergeBins(const char* file1, const char* file2)
+{
+  char* destFilename = new char[strlen(file1) + 15];
+  memcpy(destFilename, file1, strlen(file1) - 1);
+  sprintf(destFilename + strlen(file1) - 1, "_merged.bin");
+
+  printf("****** merge_dest: %s\n", destFilename);
+
+
+  // Merge bin0 and bin1 to dest
+  FILE *dest, *bin0, *bin1;
+  if((bin0 = fopen(file1, "rb")) == NULL)
+  {
+    perror("error opening bin0");
+    return;
+  }
+  if((bin1 = fopen(file2, "rb")) == NULL)
+  {
+    perror("error opening bin1");
+    return;
+  }
+  if((dest = fopen(destFilename, "wb")) == NULL)
+  {
+    perror("error opening dest");
+    return;
+  }
+
+#define _BUFFSIZE_ 1000
+  char* buffer = new char[_BUFFSIZE_];
+  size_t bytesRead;
+  do
+  {
+    bytesRead = fread(buffer, 1, _BUFFSIZE_, bin0);
+    fwrite(buffer, bytesRead, 1, dest);
+  } while (bytesRead == _BUFFSIZE_);
+  fclose(bin0);
+  do
+  {
+    bytesRead = fread(buffer, 1, _BUFFSIZE_, bin1);
+    fwrite(buffer, bytesRead, 1, dest);
+  } while (bytesRead == _BUFFSIZE_);
+  fclose(bin1);
+  fclose(dest);
+
+  // Delete bin0 and bin1
+  remove(file1);
+  remove(file2);
+}
 int cfgGetParam(char* configureFilename, char const* paramName)
 {
   std::ifstream file(configureFilename);
