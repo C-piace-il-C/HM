@@ -50,6 +50,10 @@
 // Constructor / destructor / create / destroy
 // ====================================================================================================================
 
+//__thread TEncSbac*** m_pppcRDSbacCoder;
+//#if FAST_BIT_EST
+//__thread TEncBinCABACCounter*** m_pppcBinCoderCABAC;
+//#endif
 TEncTop::TEncTop()
 {
   m_iPOCLast          = -1;
@@ -145,13 +149,14 @@ Void TEncTop::create ()
 Void TEncTop::destroy ()
 {
   // destroy processing unit classes
-  /*m_cGOPEncoder.        destroy();
+  m_cGOPEncoder.        destroy();
   m_cSliceEncoder.      destroy();
   m_cCuEncoder.         destroy();
   m_cEncSAO.            destroyEncData();
   m_cEncSAO.            destroy();
   m_cLoopFilter.        destroy();
-  m_cRateCtrl.          destroy();*/
+  m_cRateCtrl.          destroy();
+
   Int iDepth;
   for ( iDepth = 0; iDepth < m_maxTotalCUDepth+1; iDepth++ )
   {
@@ -171,6 +176,7 @@ Void TEncTop::destroy ()
   delete [] m_pppcRDSbacCoder;
   delete [] m_pppcBinCoderCABAC;
 
+  // L'errore è in destroyROM()
   // destroy ROM
   destroyROM();
 

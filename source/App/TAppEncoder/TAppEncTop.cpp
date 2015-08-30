@@ -424,7 +424,7 @@ Void TAppEncTop::xDestroyLib()
   m_cTVideoIOYuvReconFile->close();
 
   // Neo Decoder
-  //m_cTEncTop->destroy(); // IL PROBLEMA E' QUI DENTRO
+  m_cTEncTop->destroy(); // IL PROBLEMA E' QUI DENTRO
 
 }
 
@@ -530,7 +530,7 @@ Void TAppEncTop::encode(Int pocOffset)
     }
   }
 
-  m_cTEncTop->printSummary(m_isField);
+  //m_cTEncTop->printSummary(m_isField);
 
   // delete original YUV buffer
   pcPicYuvOrg->destroy();

@@ -586,7 +586,7 @@ UInt64 g_nSymbolCounter = 0;
 // ====================================================================================================================
 
 // scanning order table
-UInt* g_scanOrder[SCAN_NUMBER_OF_GROUP_TYPES][SCAN_NUMBER_OF_TYPES][ MAX_CU_DEPTH ][ MAX_CU_DEPTH ];
+__thread UInt* g_scanOrder[SCAN_NUMBER_OF_GROUP_TYPES][SCAN_NUMBER_OF_TYPES][ MAX_CU_DEPTH ][ MAX_CU_DEPTH ];
 
 const UInt ctxIndMap4x4[4*4] =
 {
