@@ -445,7 +445,7 @@ Void TAppEncTop::xInitLib(Bool isFieldCoding)
  - destroy internal class
  .
  */
-Void TAppEncTop::encode()
+Void TAppEncTop::encode(Int pocOffset)
 {
   if( m_cListPicYuvRec == NULL )
     m_cListPicYuvRec = new TComList<TComPicYuv*>();
@@ -515,11 +515,11 @@ Void TAppEncTop::encode()
     // call encoding function for one frame
     if ( m_isField )
     {
-      m_cTEncTop->encode( bEos, flush ? 0 : pcPicYuvOrg, flush ? 0 : &cPicYuvTrueOrg, snrCSC, *m_cListPicYuvRec, outputAccessUnits, iNumEncoded, m_isTopFieldFirst );
+      m_cTEncTop->encode( bEos, flush ? 0 : pcPicYuvOrg, flush ? 0 : &cPicYuvTrueOrg, snrCSC, *m_cListPicYuvRec, outputAccessUnits, iNumEncoded, m_isTopFieldFirst, pocOffset);
     }
     else
     {
-      m_cTEncTop->encode( bEos, flush ? 0 : pcPicYuvOrg, flush ? 0 : &cPicYuvTrueOrg, snrCSC, *m_cListPicYuvRec, outputAccessUnits, iNumEncoded );
+      m_cTEncTop->encode( bEos, flush ? 0 : pcPicYuvOrg, flush ? 0 : &cPicYuvTrueOrg, snrCSC, *m_cListPicYuvRec, outputAccessUnits, iNumEncoded, pocOffset);
     }
 
     // write bistream to file if necessary
