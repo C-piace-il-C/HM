@@ -48,7 +48,6 @@
 
 struct encParams
 {
-  TAppEncTop* encoder;
   int argc;
   char** argv;
 };
@@ -56,9 +55,11 @@ struct encParams
 void* encoding_thread(void* p)
 {
   struct encParams* params = (struct encParams*)p;
-  params->encoder->create();
-  params->encoder->parseCfg(params->argc, params->argv);
-  params->encoder->encode();
+  TAppEncTop* encoder = new TAppEncTop;
+  encoder->create();
+  encoder->parseCfg(params->argc, params->argv);
+  encoder->encode();
+  encoder->destroy();
   return(NULL);
 }
 
@@ -175,34 +176,29 @@ int main(int argc, char* argv[])
   char* argv0[] = { argv[0], argv[1], seq_cfg0, argv[3], cod_cfg0 };
   char* argv1[] = { argv[0], argv[1], seq_cfg1, argv[3], cod_cfg1 };
 
-
-
+  // Setup thread parameters
   TAppEncTop cTAppEncTop;
-  TAppEncTop cTAppEncTop2;
   encParams params;
   params.argc = argc;
   params.argv = argv0;
-  params.encoder = &cTAppEncTop2;
-  // starting time
+  
+  // Start benchmark
   Double dResult;
   clock_t lBefore = clock();
-  // start secondary thread encoding
-  //std::thread encThread(encoding_thread, argc, argv0, &cTAppEncTop2);
+  
+  // Multithreaded encoding
   pthread_t encThread;
   pthread_create(&encThread, NULL, encoding_thread, (void*)&params);
-  // main thread encoding
   cTAppEncTop.create();
   cTAppEncTop.parseCfg(argc, argv1);
   cTAppEncTop.encode();
-  // wait for secondary thread to finish
-  //encThread.join();
+  cTAppEncTop.destroy();
   pthread_join(encThread, NULL);
-  // ending time
+  
+  // End benchmark
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
 
-  cTAppEncTop.destroy();
-  cTAppEncTop2.destroy();
 
   // Write something that merges str0.bin and str1.bin
   // and deletes str0.bin,str1.bin, 

@@ -52,17 +52,18 @@
 // ====================================================================================================================
 // Class definition
 // ====================================================================================================================
+//extern __thread TComList<TComPicYuv*>      m_cListPicYuvRec;              ///< list of reconstruction YUV files
 
+
+extern __thread TEncTop* m_cTEncTop;
 /// encoder application class
 class TAppEncTop : public TAppEncCfg
 {
 private:
   // class interface
-  TEncTop                    m_cTEncTop;                    ///< encoder class
-  TVideoIOYuv                m_cTVideoIOYuvInputFile;       ///< input YUV file
-  TVideoIOYuv                m_cTVideoIOYuvReconFile;       ///< output reconstruction file
-
-  TComList<TComPicYuv*>      m_cListPicYuvRec;              ///< list of reconstruction YUV files
+  //TEncTop                    m_cTEncTop;                    ///< encoder class
+  //TVideoIOYuv                m_cTVideoIOYuvInputFile;       ///< input YUV file
+  //TVideoIOYuv                m_cTVideoIOYuvReconFile;       ///< output reconstruction file
 
   Int                        m_iFrameRcvd;                  ///< number of received frames
 
@@ -93,9 +94,8 @@ public:
   virtual ~TAppEncTop();
 
   Void        encode      ();                               ///< main encoding function
-  TEncTop&    getTEncTop  ()   { return  m_cTEncTop; }      ///< return encoder class pointer reference
-  Void        dispose     ();
-  Void        destroy     ()   { dispose(); }
+  TEncTop&    getTEncTop  ()   { return  *m_cTEncTop; }     ///< return encoder class pointer reference
+  Void        destroy     ()   {printf("TAppEncTop::destroy() called\n");}
 
 };// END CLASS DEFINITION TAppEncTop
 
