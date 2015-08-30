@@ -35,7 +35,7 @@
     \brief    Encoder application main
 */
 
-#include <thread>
+#include <pthread.h>
 #include <time.h>
 #include <iostream>
 #include "TAppEncTop.h"
@@ -46,15 +46,23 @@
 
 #include "../Lib/TLibCommon/Debug.h"
 
-
-void encoding_thread(int argc, char** argv, TAppEncTop* pAppEncTop)
+struct encParams
 {
-  pAppEncTop->create();
-  pAppEncTop->parseCfg(argc, argv);
-  pAppEncTop->encode(); 
+  TAppEncTop* encoder;
+  int argc;
+  char** argv;
+};
+
+void* encoding_thread(void* p)
+{
+  struct encParams* params = (struct encParams*)p;
+  params->encoder->create();
+  params->encoder->parseCfg(params->argc, params->argv);
+  params->encoder->encode();
+  return(NULL);
 }
 
-int cfgGetParam(char* configureFilename, char* paramName);
+int cfgGetParam(char* configureFilename,  char const* paramName);
 
 // ====================================================================================================================
 // Main function
@@ -100,9 +108,12 @@ int main(int argc, char* argv[])
   int frameCount_t0 = FramesToBeEncoded - frameCount_t1;
   printf("multithreading settings:\nmain thread encodes frames\t[0,%i]\n",frameCount_t0-1);
   printf("secondary thread encodes frames\t[%i, %i]\n", frameCount_t0, frameCount_t0 + frameCount_t1 - 1);
-  std::ifstream in0(sequence_cfg);
-  std::ofstream out0(sequence_cfg + "0");
-  std::ofstream out1(sequence_cfg + "1");
+  std::ifstream in0(sequence_cfg.c_str());
+  char* fname_buff = new char[sequence_cfg.length() + 2];
+  sprintf(fname_buff,"%s0",sequence_cfg.c_str());
+  std::ofstream out0(fname_buff);
+  sprintf(fname_buff,"%s1",sequence_cfg.c_str());
+  std::ofstream out1(fname_buff);
   std::string line;
   while (std::getline(in0, line))
   {
@@ -124,9 +135,13 @@ int main(int argc, char* argv[])
   }
   out0.close();
   out1.close();
-  std::ifstream in1(coding_cfg);
-  std::ofstream cod0(coding_cfg + "0");
-  std::ofstream cod1(coding_cfg + "1");
+  std::ifstream in1(coding_cfg.c_str());
+  delete[] fname_buff;
+  fname_buff = new char[coding_cfg.length() + 2];
+  sprintf(fname_buff, "%s0", coding_cfg.c_str());
+  std::ofstream cod0(fname_buff);
+  sprintf(fname_buff, "%s1", coding_cfg.c_str());
+  std::ofstream cod1(fname_buff);
   while (std::getline(in1, line))
   {
     if (line.find("BitstreamFile") != string::npos) // correct line
@@ -147,6 +162,7 @@ int main(int argc, char* argv[])
   }
   cod0.close();
   cod1.close();
+  delete[] fname_buff;
   // build two new argvs
   char* seq_cfg0 = new char[sequence_cfg.length() + 2];
   sprintf(seq_cfg0, "%s0", sequence_cfg.c_str());
@@ -163,17 +179,24 @@ int main(int argc, char* argv[])
 
   TAppEncTop cTAppEncTop;
   TAppEncTop cTAppEncTop2;
+  encParams params;
+  params.argc = argc;
+  params.argv = argv0;
+  params.encoder = &cTAppEncTop2;
   // starting time
   Double dResult;
   clock_t lBefore = clock();
   // start secondary thread encoding
-  std::thread encThread(encoding_thread, argc, argv0, &cTAppEncTop2);
+  //std::thread encThread(encoding_thread, argc, argv0, &cTAppEncTop2);
+  pthread_t encThread;
+  pthread_create(&encThread, NULL, encoding_thread, (void*)&params);
   // main thread encoding
   cTAppEncTop.create();
   cTAppEncTop.parseCfg(argc, argv1);
   cTAppEncTop.encode();
   // wait for secondary thread to finish
-  encThread.join();
+  //encThread.join();
+  pthread_join(encThread, NULL);
   // ending time
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
@@ -186,7 +209,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-int cfgGetParam(char* configureFilename, const char* paramName)
+int cfgGetParam(char* configureFilename, char const* paramName)
 {
   std::ifstream file(configureFilename);
   std::string str;
@@ -196,7 +219,7 @@ int cfgGetParam(char* configureFilename, const char* paramName)
     {
       std::string paramValue = str.substr(str.find(":") + 1);
       file.close();
-      return(stoi(paramValue));
+      return(atoi(paramValue.c_str()));
     }
   }
   return(16);
