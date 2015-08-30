@@ -41,6 +41,12 @@
 #include "TComRom.h"
 #include "TComRdCost.h"
 
+#include <arm_neon.h>
+
+#if defined _MSC_VER
+#define __static_assert
+#endif
+
 //! \ingroup TLibCommon
 //! \{
 
@@ -1333,57 +1339,43 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
 {
   Int k;
   Distortion satd = 0;
-  TCoeff diff[16], m[16], d[16];
 
-  assert( iStep == 1 );
-  for( k = 0; k < 16; k+=4 ) // loop vectorized
+  TCoeff m[16], d[16];
+  int32x4_t v_diff[4], v_m[4], v_d[4];
+
+  assert(iStep == 1);
+
+  for (k = 0; k < 4; k++)
   {
-    diff[k+0] = piOrg[0] - piCur[0];
-    diff[k+1] = piOrg[1] - piCur[1];
-    diff[k+2] = piOrg[2] - piCur[2];
-    diff[k+3] = piOrg[3] - piCur[3];
+    v_diff[k] = vsubl_s16(
+       vld1_s16(piOrg),
+       vld1_s16(piCur)
+      );
 
     piCur += iStrideCur;
     piOrg += iStrideOrg;
   }
 
   /*===== hadamard transform =====*/
-  m[ 0] = diff[ 0] + diff[12];
-  m[ 1] = diff[ 1] + diff[13];
-  m[ 2] = diff[ 2] + diff[14];
-  m[ 3] = diff[ 3] + diff[15];
+  v_m[0] = vaddq_s32(v_diff[0], v_diff[3]);
+  v_m[1] = vaddq_s32(v_diff[1], v_diff[2]);
+  v_m[2] = vsubq_s32(v_diff[1], v_diff[2]);
+  v_m[3] = vsubq_s32(v_diff[0], v_diff[3]);
 
-  m[ 4] = diff[ 4] + diff[ 8];
-  m[ 5] = diff[ 5] + diff[ 9];
-  m[ 6] = diff[ 6] + diff[10];
-  m[ 7] = diff[ 7] + diff[11];
+  vst1q_s32(m     , v_m[0]);
+  vst1q_s32(m + 4 , v_m[1]);
+  vst1q_s32(m + 8 , v_m[2]);
+  vst1q_s32(m + 12, v_m[3]);
 
-  m[ 8] = diff[ 4] - diff[ 8];
-  m[ 9] = diff[ 5] - diff[ 9];
-  m[10] = diff[ 6] - diff[10];
-  m[11] = diff[ 7] - diff[11];
+  v_d[0] = vaddq_s32(v_m[0], v_m[1]);
+  v_d[1] = vaddq_s32(v_m[2], v_m[3]);
+  v_d[2] = vsubq_s32(v_m[0], v_m[1]);
+  v_d[3] = vsubq_s32(v_m[3], v_m[2]);
 
-  m[12] = diff[ 0] - diff[12];
-  m[13] = diff[ 1] - diff[13];
-  m[14] = diff[ 2] - diff[14];
-  m[15] = diff[ 3] - diff[15];
-
-  d[ 0] = m[ 0] + m[ 4];
-  d[ 1] = m[ 1] + m[ 5];
-  d[ 2] = m[ 2] + m[ 6];
-  d[ 3] = m[ 3] + m[ 7];
-  d[ 4] = m[ 8] + m[12];
-  d[ 5] = m[ 9] + m[13];
-  d[ 6] = m[10] + m[14];
-  d[ 7] = m[11] + m[15];
-  d[ 8] = m[ 0] - m[ 4];
-  d[ 9] = m[ 1] - m[ 5];
-  d[10] = m[ 2] - m[ 6];
-  d[11] = m[ 3] - m[ 7];
-  d[12] = m[12] - m[ 8];
-  d[13] = m[13] - m[ 9];
-  d[14] = m[14] - m[10];
-  d[15] = m[15] - m[11];
+  vst1q_s32(d     , v_d[0]);
+  vst1q_s32(d + 4 , v_d[1]);
+  vst1q_s32(d + 8 , v_d[2]);
+  vst1q_s32(d + 12, v_d[3]);
 
   m[ 0] = d[ 0] + d[ 3];
   m[ 1] = d[ 1] + d[ 2];
@@ -1419,11 +1411,12 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   d[14] = m[14] + m[15];
   d[15] = m[15] - m[14];
 
-  for (k=0; k<16; ++k) // loop vectorized
+  for (k = 0; k < 16; k++)
   {
     satd += abs(d[k]);
   }
-  satd = ((satd+1)>>1);
+
+  satd = ((satd + 1) >> 1);
 
   return satd;
 }
