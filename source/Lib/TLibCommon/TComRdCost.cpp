@@ -44,9 +44,7 @@
 #include <arm_neon.h>
 
 #if defined (_MSC_VER)
-#define __static_ass#if defined (_MSC_VER)
 #define __static_assert
-#endif // !_MSC_VERert
 #endif // !_MSC_VER
 
 //! \ingroup TLibCommon
