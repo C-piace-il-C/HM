@@ -200,14 +200,15 @@ private:
 
   static Distortion xGetSAD   
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD4          ( DistParam* pcDtParam );
-  static Distortion xGetSAD8  //__attribute__((always_inline, hot, const flatten))
+  __inline static Distortion __attribute__((const, hot)) xGetSAD4
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD16 //__attribute__((always_inline, hot, const flatten))
+  __inline static Distortion __attribute__((const, hot)) xGetSAD8
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD32 //__attribute__((always_inline, hot, const flatten))
+  __inline static Distortion __attribute__((const, hot)) xGetSAD16 /* flatten))*/ 
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD64 //__attribute__((always_inline, hot, const flatten))
+  __inline static Distortion __attribute__((const, hot)) xGetSAD32
+                                      ( DistParam* pcDtParam );
+  __inline static Distortion __attribute__((const, hot)) xGetSAD64
                                       ( DistParam* pcDtParam );
   static Distortion xGetSAD16N        ( DistParam* pcDtParam );
 

@@ -62,7 +62,7 @@ class TComInterpolationFilter
                           (Int bitDepth, const Pel *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast);
 
   template<Int N, Bool isVertical, Bool isFirst, Bool isLast> 
-  __inline static Void filter /*flatten*/
+  __inline static Void __attribute__((hot)) filter /*flatten*/
                         (Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff);
 
   template<Int N>
