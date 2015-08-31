@@ -137,7 +137,8 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
       for (col = 0; col < width; col++) // loop vectorized + peeled.
       {
         Pel val = src[ col ];
-        val = clip2_m0s(rightShift_round((val + IF_INTERNAL_OFFS), shift), maxVal);
+        val = rightShift_round((val + IF_INTERNAL_OFFS), shift);
+        val = clip2_m0s(val, maxVal);
         dst[col] = val;
       }
 
