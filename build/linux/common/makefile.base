@@ -47,7 +47,7 @@ endif
 
 # default cpp flags for all configurations
 #CPPFLAGS          = -Wall -fPIC $(DEFS) -I$(CURDIR)/$(INC_DIR) $(USER_INC_DIRS)
-CPPFLAGS          = -fPIC $(DEFS) -I$(CURDIR)/$(INC_DIR) $(USER_INC_DIRS) -Wall -Wshadow -Wno-sign-compare -Werror -march=armv7-a -mtune=cortex-a7 -mfpu=neon -pthread
+CPPFLAGS          = -fPIC $(DEFS) -I$(CURDIR)/$(INC_DIR) $(USER_INC_DIRS) -Wall -Wshadow -Wno-sign-compare -march=armv7-a -mtune=cortex-a7 -mfpu=neon -pthread
 
 ########## 
 # enforce 32-bit build : 1=yes, 0=no
