@@ -44,7 +44,9 @@
 #include <arm_neon.h>
 
 #if defined (_MSC_VER)
+#define __static_ass#if defined (_MSC_VER)
 #define __static_assert
+#endif // !_MSC_VERert
 #endif // !_MSC_VER
 
 //! \ingroup TLibCommon
@@ -1467,57 +1469,43 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
 {
   Int k;
   Distortion satd = 0;
-  TCoeff diff[16], m[16], d[16];
 
-  assert( iStep == 1 );
-  for( k = 0; k < 16; k+=4 ) // loop vectorized
+  TCoeff m[16], d[16];
+  int32x4_t v_diff[4], v_m[4], v_d[4];
+
+  assert(iStep == 1);
+
+  for (k = 0; k < 4; k++)
   {
-    diff[k+0] = piOrg[0] - piCur[0];
-    diff[k+1] = piOrg[1] - piCur[1];
-    diff[k+2] = piOrg[2] - piCur[2];
-    diff[k+3] = piOrg[3] - piCur[3];
+    v_diff[k] = vsubl_s16(
+       vld1_s16(piOrg),
+       vld1_s16(piCur)
+      );
 
     piCur += iStrideCur;
     piOrg += iStrideOrg;
   }
 
   /*===== hadamard transform =====*/
-  m[ 0] = diff[ 0] + diff[12];
-  m[ 1] = diff[ 1] + diff[13];
-  m[ 2] = diff[ 2] + diff[14];
-  m[ 3] = diff[ 3] + diff[15];
+  v_m[0] = vaddq_s32(v_diff[0], v_diff[3]);
+  v_m[1] = vaddq_s32(v_diff[1], v_diff[2]);
+  v_m[2] = vsubq_s32(v_diff[1], v_diff[2]);
+  v_m[3] = vsubq_s32(v_diff[0], v_diff[3]);
 
-  m[ 4] = diff[ 4] + diff[ 8];
-  m[ 5] = diff[ 5] + diff[ 9];
-  m[ 6] = diff[ 6] + diff[10];
-  m[ 7] = diff[ 7] + diff[11];
+  vst1q_s32(m     , v_m[0]);
+  vst1q_s32(m + 4 , v_m[1]);
+  vst1q_s32(m + 8 , v_m[2]);
+  vst1q_s32(m + 12, v_m[3]);
 
-  m[ 8] = diff[ 4] - diff[ 8];
-  m[ 9] = diff[ 5] - diff[ 9];
-  m[10] = diff[ 6] - diff[10];
-  m[11] = diff[ 7] - diff[11];
+  v_d[0] = vaddq_s32(v_m[0], v_m[1]);
+  v_d[1] = vaddq_s32(v_m[2], v_m[3]);
+  v_d[2] = vsubq_s32(v_m[0], v_m[1]);
+  v_d[3] = vsubq_s32(v_m[3], v_m[2]);
 
-  m[12] = diff[ 0] - diff[12];
-  m[13] = diff[ 1] - diff[13];
-  m[14] = diff[ 2] - diff[14];
-  m[15] = diff[ 3] - diff[15];
-
-  d[ 0] = m[ 0] + m[ 4];
-  d[ 1] = m[ 1] + m[ 5];
-  d[ 2] = m[ 2] + m[ 6];
-  d[ 3] = m[ 3] + m[ 7];
-  d[ 4] = m[ 8] + m[12];
-  d[ 5] = m[ 9] + m[13];
-  d[ 6] = m[10] + m[14];
-  d[ 7] = m[11] + m[15];
-  d[ 8] = m[ 0] - m[ 4];
-  d[ 9] = m[ 1] - m[ 5];
-  d[10] = m[ 2] - m[ 6];
-  d[11] = m[ 3] - m[ 7];
-  d[12] = m[12] - m[ 8];
-  d[13] = m[13] - m[ 9];
-  d[14] = m[14] - m[10];
-  d[15] = m[15] - m[11];
+  vst1q_s32(d     , v_d[0]);
+  vst1q_s32(d + 4 , v_d[1]);
+  vst1q_s32(d + 8 , v_d[2]);
+  vst1q_s32(d + 12, v_d[3]);
 
   m[ 0] = d[ 0] + d[ 3];
   m[ 1] = d[ 1] + d[ 2];
@@ -1553,48 +1541,51 @@ Distortion TComRdCost::xCalcHADs4x4( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   d[14] = m[14] + m[15];
   d[15] = m[15] - m[14];
 
-  for (k=0; k<16; ++k) // loop vectorized
+  for (k = 0; k < 16; k++)
   {
     satd += abs(d[k]);
   }
-  satd = ((satd+1)>>1);
+
+  satd = ((satd + 1) >> 1);
 
   return satd;
 }
 
 Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int iStrideCur, Int iStep )
 {
-  Int k, i, j, jj;
+  Int k, i, j;
+
   Distortion sad = 0;
-  TCoeff diff[64], m1[8][8], m2[8][8], m3[8][8];
-  assert( iStep == 1 );
-  for( k = 0; k < 64; k += 8 ) // loop vectorized
+
+  TCoeff m1[8][8], m2[8][8], m3[8][8];
+  int32x4x2_t v_diff[8], v_m2;
+
+  assert(iStep == 1);
+
+  for (k = 0; k < 8; k++)
   {
-    diff[k+0] = piOrg[0] - piCur[0];
-    diff[k+1] = piOrg[1] - piCur[1];
-    diff[k+2] = piOrg[2] - piCur[2];
-    diff[k+3] = piOrg[3] - piCur[3];
-    diff[k+4] = piOrg[4] - piCur[4];
-    diff[k+5] = piOrg[5] - piCur[5];
-    diff[k+6] = piOrg[6] - piCur[6];
-    diff[k+7] = piOrg[7] - piCur[7];
+    v_diff[k].val[0] = vsubl_s16(
+        vld1_s16(piOrg),
+        vld1_s16(piCur)
+      );
+
+    v_diff[k].val[1] = vsubl_s16(
+        vld1_s16(piOrg + 4),
+        vld1_s16(piCur + 4)
+      );
 
     piCur += iStrideCur;
     piOrg += iStrideOrg;
   }
 
   //horizontal
-  for (j=0; j < 8; j++)
+  for (j = 0; j < 8; j++)
   {
-    jj = j << 3;
-    m2[j][0] = diff[jj  ] + diff[jj+4];
-    m2[j][1] = diff[jj+1] + diff[jj+5];
-    m2[j][2] = diff[jj+2] + diff[jj+6];
-    m2[j][3] = diff[jj+3] + diff[jj+7];
-    m2[j][4] = diff[jj  ] - diff[jj+4];
-    m2[j][5] = diff[jj+1] - diff[jj+5];
-    m2[j][6] = diff[jj+2] - diff[jj+6];
-    m2[j][7] = diff[jj+3] - diff[jj+7];
+    v_m2.val[0] = vaddq_s32(v_diff[j].val[0], v_diff[j].val[1]);
+    v_m2.val[1] = vsubq_s32(v_diff[j].val[0], v_diff[j].val[1]);
+
+    vst1q_s32(m2[j]    , v_m2.val[0]);
+    vst1q_s32(m2[j] + 4, v_m2.val[1]);
 
     m1[j][0] = m2[j][0] + m2[j][2];
     m1[j][1] = m2[j][1] + m2[j][3];
@@ -1616,7 +1607,7 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
   }
 
   //vertical
-  for (i=0; i < 8; i++) // loop vectorized
+  for (i = 0; i < 8; i++) // loop vectorized
   {
     m3[0][i] = m2[0][i] + m2[4][i];
     m3[1][i] = m2[1][i] + m2[5][i];
@@ -1646,15 +1637,21 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
     m2[7][i] = m1[6][i] - m1[7][i];
   }
 
-  for (i = 0; i < 8; i++) // loop vectorized
+  int32x4_t v_sad = vdupq_n_s32(0);
+
+  for (i = 0; i < 8; i++)
   {
-    for (j = 0; j < 8; j++)
-    {
-      sad += abs(m2[i][j]);
-    }
+    v_m2  = vld2q_s32(m2[i]);
+
+    v_sad = vaddq_s32(v_sad, vabsq_s32(v_m2.val[0]));
+    v_sad = vaddq_s32(v_sad, vabsq_s32(v_m2.val[1]));
   }
 
-  sad=((sad+2)>>2);
+  sad =
+    vgetq_lane_s32(v_sad, 0) + vgetq_lane_s32(v_sad, 1) +
+    vgetq_lane_s32(v_sad, 2) + vgetq_lane_s32(v_sad, 3);
+
+  sad = ((sad + 2) >> 2);
 
   return sad;
 }
