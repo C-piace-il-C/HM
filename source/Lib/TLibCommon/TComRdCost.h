@@ -201,13 +201,13 @@ private:
   static Distortion xGetSAD   
                                       ( DistParam* pcDtParam );
   static Distortion xGetSAD4          ( DistParam* pcDtParam );
-  static Distortion xGetSAD8   __attribute__((always_inline, hot, const flatten))
+  static Distortion xGetSAD8  //__attribute__((always_inline, hot, const flatten))
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD16  __attribute__((always_inline, hot, const flatten))
+  static Distortion xGetSAD16 //__attribute__((always_inline, hot, const flatten))
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD32  __attribute__((always_inline, hot, const flatten))
+  static Distortion xGetSAD32 //__attribute__((always_inline, hot, const flatten))
                                       ( DistParam* pcDtParam );
-  static Distortion xGetSAD64  __attribute__((always_inline, hot, const flatten))
+  static Distortion xGetSAD64 //__attribute__((always_inline, hot, const flatten))
                                       ( DistParam* pcDtParam );
   static Distortion xGetSAD16N        ( DistParam* pcDtParam );
 
@@ -217,9 +217,9 @@ private:
 
   static Distortion xGetHADs          ( DistParam* pcDtParam );
   static Distortion xCalcHADs2x2      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
-  static Distortion xCalcHADs4x4  __attribute__((always_inline, const, hot))
+  static Distortion xCalcHADs4x4 //__attribute__((always_inline, const, hot))
                                       ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
-  static Distortion xCalcHADs8x8  __attribute__((always_inline, const, hot))
+  static Distortion xCalcHADs8x8 //__attribute__((always_inline, const, hot))
                                       ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
 
 
