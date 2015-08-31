@@ -216,10 +216,10 @@ private:
   static Distortion xGetSAD48         ( DistParam* pcDtParam );
 
   static Distortion xGetHADs          ( DistParam* pcDtParam );
-  static Distortion xCalcHADs2x2      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
-  static Distortion xCalcHADs4x4 //__attribute__((always_inline, const, hot))
+  __inline static Distortion __attribute__((hot, pure)) xCalcHADs2x2      ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
+  __inline static Distortion __attribute__((hot, pure)) xCalcHADs4x4 //__attribute__((always_inline, const, hot))
                                       ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
-  static Distortion xCalcHADs8x8 //__attribute__((always_inline, const, hot))
+  __inline static Distortion __attribute__((hot, pure)) xCalcHADs8x8 //__attribute__((always_inline, const, hot))
                                       ( Pel *piOrg, Pel *piCurr, Int iStrideOrg, Int iStrideCur, Int iStep );
 
 

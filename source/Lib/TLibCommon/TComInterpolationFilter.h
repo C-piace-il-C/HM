@@ -58,11 +58,11 @@ class TComInterpolationFilter
   static const TFilterCoeff m_lumaFilter[LUMA_INTERPOLATION_FILTER_SUB_SAMPLE_POSITIONS][NTAPS_LUMA];     ///< Luma filter taps
   static const TFilterCoeff m_chromaFilter[CHROMA_INTERPOLATION_FILTER_SUB_SAMPLE_POSITIONS][NTAPS_CHROMA]; ///< Chroma filter taps
 
-  __inline static Void __attribute__((hot, pure)) /* hot, flatten))*/ filterCopy
+  __inline static Void filterCopy
                           (Int bitDepth, const Pel *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast);
 
   template<Int N, Bool isVertical, Bool isFirst, Bool isLast> 
-  /*__inline*/ static Void /* __attribute((pure, hot, flatten))*/ filter
+  __inline static Void filter /*flatten*/
                         (Int bitDepth, Pel const *src, Int srcStride, Pel *dst, Int dstStride, Int width, Int height, TFilterCoeff const *coeff);
 
   template<Int N>
