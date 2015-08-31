@@ -1507,13 +1507,19 @@ Distortion TComRdCost::xCalcHADs8x8( Pel *piOrg, Pel *piCur, Int iStrideOrg, Int
     m2[7][i] = m1[6][i] - m1[7][i];
   }
 
-  for (i = 0; i < 8; i++) // loop vectorized
+  int32x4_t v_sad = vdupq_n_s32(0);
+
+  for (i = 0; i < 8; i++)
   {
-    for (j = 0; j < 8; j++)
-    {
-      sad += abs(m2[i][j]);
-    }
+    v_m2  = vld2q_s32(m2[i]);
+
+    v_sad = vaddq_s32(v_sad, vabsq_s32(v_m2.val[0]));
+    v_sad = vaddq_s32(v_sad, vabsq_s32(v_m2.val[1]));
   }
+
+  sad =
+    vgetq_lane_s32(v_sad, 0) + vgetq_lane_s32(v_sad, 1) +
+    vgetq_lane_s32(v_sad, 2) + vgetq_lane_s32(v_sad, 3);
 
   sad = ((sad + 2) >> 2);
 
