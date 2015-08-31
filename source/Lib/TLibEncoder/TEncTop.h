@@ -63,7 +63,10 @@
 // ====================================================================================================================
 // Class definition
 // ====================================================================================================================
-
+//extern __thread TEncSbac*** m_pppcRDSbacCoder;
+//#if FAST_BIT_EST
+//extern __thread TEncBinCABACCounter*** m_pppcBinCoderCABAC;
+//#endif
 /// encoder class
 class TEncTop : public TEncCfg
 {
@@ -96,13 +99,13 @@ private:
   TComPPS                 m_cPPS;                         ///< PPS. This is the base value. This is copied to TComPicSym
   // RD cost computation
   TComRdCost              m_cRdCost;                      ///< RD cost computation class
-  TEncSbac***             m_pppcRDSbacCoder;              ///< temporal storage for RD computation
+  /* */TEncSbac***             m_pppcRDSbacCoder;              ///< temporal storage for RD computation
   TEncSbac                m_cRDGoOnSbacCoder;             ///< going on SBAC model for RD stage
 #if FAST_BIT_EST
-  TEncBinCABACCounter***  m_pppcBinCoderCABAC;            ///< temporal CABAC state storage for RD computation
+  /* */TEncBinCABACCounter***  m_pppcBinCoderCABAC;            ///< temporal CABAC state storage for RD computation
   TEncBinCABACCounter     m_cRDGoOnBinCoderCABAC;         ///< going on bin coder CABAC for RD stage
 #else
-  TEncBinCABAC***         m_pppcBinCoderCABAC;            ///< temporal CABAC state storage for RD computation
+  /* */TEncBinCABAC***         m_pppcBinCoderCABAC;            ///< temporal CABAC state storage for RD computation
   TEncBinCABAC            m_cRDGoOnBinCoderCABAC;         ///< going on bin coder CABAC for RD stage
 #endif
 
@@ -164,13 +167,13 @@ public:
                TComPicYuv* pcPicYuvOrg,
                TComPicYuv* pcPicYuvTrueOrg, const InputColourSpaceConversion snrCSC, // used for SNR calculations. Picture in original colour space.
                TComList<TComPicYuv*>& rcListPicYuvRecOut,
-               std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded );
+               std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded, Int pocOffset);
 
   /// encode several number of pictures until end-of-sequence
   Void encode( Bool bEos, TComPicYuv* pcPicYuvOrg,
                TComPicYuv* pcPicYuvTrueOrg, const InputColourSpaceConversion snrCSC, // used for SNR calculations. Picture in original colour space.
                TComList<TComPicYuv*>& rcListPicYuvRecOut,
-               std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded, Bool isTff);
+               std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded, Bool isTff, Int pocOffset);
 
   Void printSummary(Bool isField) { m_cGOPEncoder.printOutSummary (m_uiNumAllPicCoded, isField, m_printMSEBasedSequencePSNR, m_printSequenceMSE, m_cSPS.getBitDepths()); }
 

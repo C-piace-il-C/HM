@@ -35,6 +35,7 @@
     \brief    Encoder application main
 */
 
+#include <pthread.h>
 #include <time.h>
 #include <iostream>
 #include "TAppEncTop.h"
@@ -45,14 +46,31 @@
 
 #include "../Lib/TLibCommon/Debug.h"
 
+struct encParams
+{
+  int argc;
+  char** argv;
+};
+
+void* encoding_thread(void* p)
+{
+  struct encParams* params = (struct encParams*)p;
+  TAppEncTop* encoder = new TAppEncTop;
+  encoder->create();
+  encoder->parseCfg(params->argc, params->argv);
+  encoder->encode(0);
+  encoder->destroy();
+  return(NULL);
+}
+
+int cfgGetParam(char* configureFilename,  char const* paramName);
+void mergeBins(const char* file1, const char* file2);
+
 // ====================================================================================================================
 // Main function
 // ====================================================================================================================
-
 int main(int argc, char* argv[])
 {
-  TAppEncTop  cTAppEncTop;
-
   // print information
   fprintf( stdout, "\n" );
   fprintf( stdout, "HM software: Encoder Version [%s] (including RExt)", NV_VERSION );
@@ -61,50 +79,197 @@ int main(int argc, char* argv[])
   fprintf( stdout, NVM_BITS );
   fprintf( stdout, "\n\n" );
 
-  // create application encoder class
-  cTAppEncTop.create();
-
-  // parse configuration
-  try
+  // analyze configure files
+  int cfg_cnt = 0;
+  int IntraPeriod = 0, FrameSkip = 0, FramesToBeEncoded = 0;
+  std::string sequence_cfg;
+  std::string coding_cfg;
+  for (int C = 0; C < argc; C++)
   {
-    if(!cTAppEncTop.parseCfg( argc, argv ))
+    if (strcmp("-c", argv[C]) == 0)
     {
-      cTAppEncTop.destroy();
-#if ENVIRONMENT_VARIABLE_DEBUG_AND_TEST
-      EnvVar::printEnvVar();
-#endif
-      return 1;
+      cfg_cnt++;
+      if (cfg_cnt == 1)
+      {
+        sequence_cfg = argv[C + 1];
+        FrameSkip = cfgGetParam(argv[C + 1], "FrameSkip");
+        FramesToBeEncoded = cfgGetParam(argv[C + 1], "FramesToBeEncoded");
+      }
+      else if (cfg_cnt == 2)
+      {
+        coding_cfg = argv[C + 1];
+        IntraPeriod = cfgGetParam(argv[C + 1], "IntraPeriod");
+      }
     }
   }
-  catch (df::program_options_lite::ParseFailure &e)
+
+  // build two new configure files
+  int periodCount   = FramesToBeEncoded / IntraPeriod;
+  int frameCount_t1 = periodCount / 2 * IntraPeriod;
+  int frameCount_t0 = FramesToBeEncoded - frameCount_t1;
+  printf("multithreading settings:\nmain thread encodes frames\t[0,%i]\n",frameCount_t0-1);
+  printf("secondary thread encodes frames\t[%i, %i]\n", frameCount_t0, frameCount_t0 + frameCount_t1 - 1);
+  std::ifstream in0(sequence_cfg.c_str());
+  char* fname_buff = new char[sequence_cfg.length() + 2];
+  sprintf(fname_buff,"%s0",sequence_cfg.c_str());
+  std::ofstream out0(fname_buff);
+  sprintf(fname_buff,"%s1",sequence_cfg.c_str());
+  std::ofstream out1(fname_buff);
+  std::string line;
+  while (std::getline(in0, line))
   {
-    std::cerr << "Error parsing option \""<< e.arg <<"\" with argument \""<< e.val <<"\"." << std::endl;
-    return 1;
+    if (line.find("FrameSkip") != string::npos) // correct line
+    {
+      out0 << "FrameSkip                     : " << FrameSkip << "\n";
+      out1 << "FrameSkip                     : " << FrameSkip + frameCount_t0 << "\n";
+    }
+    else if (line.find("FramesToBeEncoded") != string::npos)
+    {
+      out0 << "FramesToBeEncoded             : " << frameCount_t0 << "\n";
+      out1 << "FramesToBeEncoded             : " << frameCount_t1 << "\n";
+    }
+    else
+    {
+      out0 << line << "\n";
+      out1 << line << "\n";
+    }
   }
+  out0.close();
+  out1.close();
+  std::ifstream in1(coding_cfg.c_str());
+  delete[] fname_buff;
+  fname_buff = new char[coding_cfg.length() + 2];
+  sprintf(fname_buff, "%s0", coding_cfg.c_str());
+  std::ofstream cod0(fname_buff);
+  sprintf(fname_buff, "%s1", coding_cfg.c_str());
+  std::ofstream cod1(fname_buff);
+  while (std::getline(in1, line))
+  {
+    if (line.find("BitstreamFile") != string::npos) // correct line
+    {
+      cod0 << "BitstreamFile                 : str0.bin \n";
+      cod1 << "BitstreamFile                 : str1.bin \n";
+    }
+    else if (line.find("ReconFile") != string::npos)
+    {
+      cod0 << "ReconFile                     : rec0.yuv \n";
+      cod1 << "ReconFile                     : rec1.yuv \n";
+    }
+    else
+    {
+      cod0 << line << "\n";
+      cod1 << line << "\n";
+    }
+  }
+  cod0.close();
+  cod1.close();
+  delete[] fname_buff;
+  // build two new argvs
+  char* seq_cfg0 = new char[sequence_cfg.length() + 2];
+  sprintf(seq_cfg0, "%s0", sequence_cfg.c_str());
+  char* seq_cfg1 = new char[sequence_cfg.length() + 2];
+  sprintf(seq_cfg1, "%s1", sequence_cfg.c_str());
+  char* cod_cfg0 = new char[coding_cfg.length() + 2];
+  sprintf(cod_cfg0, "%s0", coding_cfg.c_str());
+  char* cod_cfg1 = new char[coding_cfg.length() + 2];
+  sprintf(cod_cfg1, "%s1", coding_cfg.c_str());
+  char* argv0[] = { argv[0], argv[1], seq_cfg0, argv[3], cod_cfg0 };
+  char* argv1[] = { argv[0], argv[1], seq_cfg1, argv[3], cod_cfg1 };
 
-#if PRINT_MACRO_VALUES
-  printMacroSettings();
-#endif
-
-#if ENVIRONMENT_VARIABLE_DEBUG_AND_TEST
-  EnvVar::printEnvVarInUse();
-#endif
-
-  // starting time
+  // Setup thread parameters
+  TAppEncTop cTAppEncTop;
+  encParams params;
+  params.argc = argc;
+  params.argv = argv0;
+  
+  // Start benchmark
   Double dResult;
   clock_t lBefore = clock();
-
-  // call encoding function
-  cTAppEncTop.encode();
-
-  // ending time
+  
+  // Multithreaded encoding
+  pthread_t encThread;
+  pthread_create(&encThread, NULL, encoding_thread, (void*)&params);
+  cTAppEncTop.create();
+  cTAppEncTop.parseCfg(argc, argv1);
+  cTAppEncTop.encode(frameCount_t0);
+  cTAppEncTop.destroy();
+  pthread_join(encThread, NULL);
+  
+  // End benchmark
   dResult = (Double)(clock()-lBefore) / CLOCKS_PER_SEC;
   printf("\n Total Time: %12.3f sec.\n", dResult);
-
-  // destroy application encoder class
-  cTAppEncTop.destroy();
-
+  
+  // Merge bins
+  //int pos = (coding_cfg.rfind("\\") == std::string::npos) ? coding_cfg.rfind("/") : coding_cfg.rfind("\\");
+  std::string bin0Filename = "str0.bin";
+  std::string bin1Filename = "str1.bin";
+  printf("\n\n****** file0: %s\n****** file1: %s\n", bin0Filename.c_str(), bin1Filename.c_str());
+  mergeBins(bin0Filename.c_str(), bin1Filename.c_str());
   return 0;
+}
+
+void mergeBins(const char* file1, const char* file2)
+{
+  char* destFilename = new char[strlen(file1) + 15];
+  memcpy(destFilename, file1, strlen(file1) - 1);
+  sprintf(destFilename + strlen(file1) - 1, "_merged.bin");
+
+  printf("****** merge_dest: %s\n", destFilename);
+
+
+  // Merge bin0 and bin1 to dest
+  FILE *dest, *bin0, *bin1;
+  if((bin0 = fopen(file1, "rb")) == NULL)
+  {
+    perror("error opening bin0");
+    return;
+  }
+  if((bin1 = fopen(file2, "rb")) == NULL)
+  {
+    perror("error opening bin1");
+    return;
+  }
+  if((dest = fopen(destFilename, "wb")) == NULL)
+  {
+    perror("error opening dest");
+    return;
+  }
+
+#define _BUFFSIZE_ 1000
+  char* buffer = new char[_BUFFSIZE_];
+  size_t bytesRead;
+  do
+  {
+    bytesRead = fread(buffer, 1, _BUFFSIZE_, bin0);
+    fwrite(buffer, bytesRead, 1, dest);
+  } while (bytesRead == _BUFFSIZE_);
+  fclose(bin0);
+  do
+  {
+    bytesRead = fread(buffer, 1, _BUFFSIZE_, bin1);
+    fwrite(buffer, bytesRead, 1, dest);
+  } while (bytesRead == _BUFFSIZE_);
+  fclose(bin1);
+  fclose(dest);
+
+  // Delete bin0 and bin1
+  remove(file1);
+  remove(file2);
+}
+int cfgGetParam(char* configureFilename, char const* paramName)
+{
+  std::ifstream file(configureFilename);
+  std::string str;
+  while (std::getline(file, str))
+  {
+    if (str.find(paramName) != string::npos) // correct line
+    {
+      std::string paramValue = str.substr(str.find(":") + 1);
+      file.close();
+      return(atoi(paramValue.c_str()));
+    }
+  }
+  return(16);
 }
 
 //! \}
