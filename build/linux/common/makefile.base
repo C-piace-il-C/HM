@@ -64,7 +64,7 @@ endif
 
 #
 # debug cpp flags
-DEBUG_CPPFLAGS    = -g  -D_DEBUG
+DEBUG_CPPFLAGS    = -Og  -D_DEBUG
 #
 # release cpp
 RELEASE_CPPFLAGS  = -Ofast -Wuninitialized -ftree-vectorize
